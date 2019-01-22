@@ -8,4 +8,17 @@ public class Word {
     private String picture;
     private boolean completed;
 
+    public Word(List<Phoneme> spelling) {
+        this.spelling = spelling;
+    }
+
+    @Override
+    public String toString() {
+        return "Word{" +
+                "spelling=" + spelling +
+                ", picture='" + picture + '\'' +
+                ", completed=" + completed +
+                '}';
+    }
+
 }
