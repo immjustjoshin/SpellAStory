@@ -20,4 +20,28 @@ public class Word {
                 ", completed=" + completed +
                 '}';
     }
+
+    public int getPicture() {
+        return picture;
+    }
+
+    public void setPicture(int picture) {
+        this.picture = picture;
+    }
+
+    public List<Phoneme> getSpelling() {
+        return spelling;
+    }
+
+    public void setSpelling(List<Phoneme> spelling) {
+        this.spelling = spelling;
+    }
+
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
+    }
 }

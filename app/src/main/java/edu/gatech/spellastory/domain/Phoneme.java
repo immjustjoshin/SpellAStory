@@ -18,4 +18,28 @@ public class Phoneme {
                 ", color='" + color + '\'' +
                 '}';
     }
+
+    public String getAudio() {
+        return audio;
+    }
+
+    public void setAudio(String audio) {
+        this.audio = audio;
+    }
+
+    public String getSpelling() {
+        return spelling;
+    }
+
+    public void setSpelling(String spelling) {
+        this.spelling = spelling;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
 }
