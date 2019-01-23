@@ -1,7 +1,5 @@
 <resources>
     <string name="app_name">SpellAStory</string>
     <string name="title">Spell A Story</string>
-    <string name="one_word">One Word</string>
-    <string name="three_words">Three Words</string>
-    <string name="my_words">My Words</string>
+    <string name="picture">Picture</string>
 </resources>

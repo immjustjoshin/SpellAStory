@@ -5,7 +5,7 @@ import java.util.List;
 public class Word {
 
     private List<Phoneme> spelling;
-    private String picture;
+    private int picture;
     private boolean completed;
 
     public Word(List<Phoneme> spelling) {
@@ -20,5 +20,4 @@ public class Word {
                 ", completed=" + completed +
                 '}';
     }
-
 }
