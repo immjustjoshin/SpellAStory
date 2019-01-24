@@ -31,7 +31,27 @@ public class Database {
         this.wordsDb = wordsDb;
     }
 
-    public Word getWord(String word) {
+    public List<PhonemeWordsPair> getWordsForLevel(int level) {
+        List<PhonemeWordsPair> wordsForLevel = new ArrayList<>();
+        List<String> levelPhonemeCodes = Levels.getLevel(level);
+        for (String phonemeCode : levelPhonemeCodes) {
+            List<Word> wordsWithPhonemeCode = convertWordStringsToWordObjs(wordsDb.getWordsForPhonemeCode(phonemeCode));
+            if (!wordsWithPhonemeCode.isEmpty()) {
+                wordsForLevel.add(new PhonemeWordsPair(phonemeCode, wordsWithPhonemeCode));
+            }
+        }
+        return wordsForLevel;
+    }
+
+    private List<Word> convertWordStringsToWordObjs(List<String> wordStrings) {
+        List<Word> wordObjs = new ArrayList<>();
+        for (String wordString : wordStrings) {
+            wordObjs.add(getWord(wordString));
+        }
+        return wordObjs;
+    }
+
+    private Word getWord(String word) {
         String originalWord = word;
         List<String> codedPhonemes = wordsDb.getPhonemeCodesForWord(word);
         List<Phoneme> phonemeObjs = new ArrayList<>();
@@ -61,25 +81,5 @@ public class Database {
             throw new IllegalArgumentException("Did not encode letters " + word + " for word " + originalWord);
         }
         return new Word(originalWord, phonemeObjs);
-    }
-
-    public List<PhonemeWordsPair> getWordsForLevel(int level) {
-        List<PhonemeWordsPair> wordsForLevel = new ArrayList<>();
-        List<String> levelPhonemeCodes = Levels.getLevel(level);
-        for (String phonemeCode : levelPhonemeCodes) {
-            List<Word> wordsWithPhonemeCode = convertWordStringsToWordObjs(wordsDb.getWordsForPhonemeCode(phonemeCode));
-            if (!wordsWithPhonemeCode.isEmpty()) {
-                wordsForLevel.add(new PhonemeWordsPair(phonemeCode, wordsWithPhonemeCode));
-            }
-        }
-        return wordsForLevel;
-    }
-
-    private List<Word> convertWordStringsToWordObjs(List<String> wordStrings) {
-        List<Word> wordObjs = new ArrayList<>();
-        for (String wordString : wordStrings) {
-            wordObjs.add(getWord(wordString));
-        }
-        return wordObjs;
     }
 }
