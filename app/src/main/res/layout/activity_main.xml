@@ -18,31 +18,11 @@
         android:textColor="@color/black"/>
 
     <Button
-        android:id="@+id/oneWordButton"
+        android:id="@+id/selectWordButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_below="@id/titleTextView"
         android:layout_marginTop="90dp"
-        android:text="@string/one_word"/>
-
-    <Button
-        android:id="@+id/threeWordButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/oneWordButton"
-        android:layout_marginTop="25dp"
-        android:text="@string/three_words"/>
-
-    <Button
-        android:id="@+id/myWordsButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/threeWordButton"
-        android:layout_marginTop="25dp"
-        android:text="@string/my_words"/>
-
-
+        android:text="Choose Word To Spell"/>
 </RelativeLayout>

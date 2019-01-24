@@ -1,46 +1,48 @@
 package edu.gatech.spellastory;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
 
-public class PictureListAdapter extends ArrayAdapter<String> {
+import java.util.List;
 
-    Context mContext;
-    int[] pictureID;
+import edu.gatech.spellastory.domain.Word;
 
-    public PictureListAdapter(Context context, int[] pictureID) {
-        super(context, R.layout.listview_picture_words);
-        this.pictureID = pictureID;
-        this.mContext = context;
+public class PictureListAdapter extends BaseAdapter {
+
+    private Context mContext;
+    private int[] mWordImageID;
+    private List<Word> mWords;
+
+    // Constructor
+    public PictureListAdapter(Context mContext, int[] mWordImageID, List<Word> mWords) {
+        this.mContext = mContext;
+        this.mWordImageID = mWordImageID;
+        this.mWords = mWords;
     }
 
     @Override
     public int getCount() {
-        return pictureID.length;
+        return mWords.size();
     }
 
-    @NonNull
+    @Override
+    public Object getItem(int position) {
+        return mWords.get(position);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder mViewHolder = new ViewHolder();
-        if (convertView == null) {
-            LayoutInflater mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = mInflater.inflate(R.layout.listview_picture_words, parent, false);
-            mViewHolder.mPictureID = (ImageButton) convertView.findViewById(R.id.wordImageButton);
-            convertView.setTag(mViewHolder);
-        } else {
-            mViewHolder = (ViewHolder) convertView.getTag();
-        }
-        mViewHolder.mPictureID.setImageResource(pictureID[position]);
-        return convertView;
-    }
-
-    static class ViewHolder {
-        ImageButton mPictureID;
+        View v = View.inflate(mContext, R.layout.listview_picture_words, null);
+        ImageView picture =(ImageView)v.findViewById(R.id.wordImageView);
+        picture.setImageResource(mWordImageID[position]);
+        return v;
     }
 }

@@ -1,8 +1,11 @@
 package edu.gatech.spellastory;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ListView;
+import android.widget.AdapterView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,54 +31,97 @@ public class WordListActivity extends AppCompatActivity {
 
         pictureList = (ListView) findViewById(R.id.pictureListView);
 
-        if (getIntent() != null) {
-            phoneme = (Phoneme) getIntent().getExtras().getSerializable(EX_PHONEME);
-            level = (int) getIntent().getExtras().getSerializable(EX_LEVEL);
-            wordChoices = getWords(phoneme, level);
-        }
+//        if (getIntent() != null) {
+//            phoneme = (Phoneme) getIntent().getExtras().getSerializable(EX_PHONEME);
+//            level = (int) getIntent().getExtras().getSerializable(EX_LEVEL);
+//            wordChoices = getWords(phoneme, level);
+//        }
 
-        int i = 0;
+        // Temporary Pictures
+        wordChoices = new ArrayList<>();
+        Phoneme c = new Phoneme("c");
+        Phoneme o = new Phoneme("o");
+        Phoneme p = new Phoneme("p");
+        List<Phoneme> cop1 = new ArrayList<>();
+        cop1.add(c);
+        cop1.add(o);
+        cop1.add(p);
+        Word cop = new Word(cop1);
+        cop.setPicture(R.drawable.cop);
+        wordChoices.add(cop);
+
+        Phoneme d = new Phoneme("d");
+        List<Phoneme> doc1 = new ArrayList<>();
+        doc1.add(d);
+        doc1.add(o);
+        doc1.add(c);
+        Word doc = new Word(doc1);
+        doc.setPicture(R.drawable.doc);
+        wordChoices.add(doc);
+
+        Phoneme e = new Phoneme("e");
+        Phoneme l = new Phoneme("l");
+        Phoneme f = new Phoneme("f");
+        List<Phoneme> elf1 = new ArrayList<>();
+        elf1.add(e);
+        elf1.add(l);
+        elf1.add(f);
+        Word elf = new Word(elf1);
+        elf.setPicture(R.drawable.elf);
+        wordChoices.add(elf);
+
+        Phoneme g = new Phoneme("g");
+        Phoneme a = new Phoneme("a");
+        List<Phoneme> gal1 = new ArrayList<>();
+        gal1.add(g);
+        gal1.add(a);
+        gal1.add(l);
+        Word gal = new Word(gal1);
+        gal.setPicture(R.drawable.gal);
+        wordChoices.add(gal);
+
+        Phoneme k = new Phoneme("k");
+        Phoneme i = new Phoneme("i");
+        List<Phoneme> kid1 = new ArrayList<>();
+        kid1.add(k);
+        kid1.add(i);
+        kid1.add(d);
+        Word kid = new Word(kid1);
+        kid.setPicture(R.drawable.kid);
+        wordChoices.add(kid);
+
+        Phoneme r = new Phoneme("r");
+        List<Phoneme> ref1 = new ArrayList<>();
+        ref1.add(r);
+        ref1.add(e);
+        ref1.add(f);
+        Word ref = new Word(ref1);
+        ref.setPicture(R.drawable.ref);
+        wordChoices.add(ref);
+        wordImageID = new int[wordChoices.size()];
+
+        int j = 0;
         for (Word word : wordChoices) {
-            wordImageID[i] = word.picture;
-            i++;
+            wordImageID[j] = word.getPicture();
+            j++;
         }
-        PictureListAdapter adapter = new PictureListAdapter(WordListActivity.this, wordImageID);
+        PictureListAdapter adapter = new PictureListAdapter(WordListActivity.this, wordImageID, wordChoices);
         pictureList.setAdapter(adapter);
 
-//        Phoneme bl = new Phoneme("bl");
-//        Phoneme o = new Phoneme("o");
-//        Phoneme w = new Phoneme("w");
-//        Phoneme d = new Phoneme("d");
-//        Phoneme a = new Phoneme("a");
-//        Phoneme c = new Phoneme("c");
-//        Phoneme k = new Phoneme("k");
-//        List<Phoneme> black1 = new ArrayList<>();
-//        black1.add(bl);
-//        black1.add(a);
-//        black1.add(c);
-//        black1.add(k);
-//        Word black = new Word(black1);
-//        black.setPicture(R.drawable.aot1);
-//        List<Phoneme> blow1 = new ArrayList<>();
-//        blow1.add(bl);
-//        blow1.add(o);
-//        blow1.add(w);
-//        Word blow = new Word(blow1);
-//        blow.setPicture(R.drawable.aot2);
-//        List<Phoneme> blood1 = new ArrayList<>();
-//        blood1.add(bl);
-//        blood1.add(o);
-//        blood1.add(o);
-//        blood1.add(d);
-//        Word blood = new Word(blood1);
-//        blood.setPicture(R.drawable.aot3);
-//        wordChoices = new ArrayList<>();
-//        wordChoices.add(black);
-//        wordChoices.add(blow);
-//        wordChoices.add(blood);
-//        wordImageID[0] = black.getPicture();
-//        wordImageID[1] = blow.getPicture();
-//        wordImageID[2] = blood.getPicture();
+        pictureList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Word word = (Word) parent.getItemAtPosition(position);
+                List<Phoneme> spelling = word.getSpelling();
+                String finalSpelling = "";
+                for (Phoneme p : spelling) {
+                    finalSpelling = finalSpelling + p.getSpelling();
+                }
+                Intent intent = new Intent(WordListActivity.this, LevelActivity.class);
+                intent.putExtra("word", finalSpelling);
+                startActivity(intent);
+            }
+        });
     }
 
     /**
