@@ -40,10 +40,18 @@ public class Phonemes {
         return null;
     }
 
-    public List<String> getPhonemeSpellings(String codedPhoneme) {
+    List<String> getPhonemeSpellings(String codedPhoneme) {
         if (codedPhoneme.equals("0")) {
             return new ArrayList<>(); // 0 is a silent phoneme
         }
         return phonemes.get(codedPhoneme);
+    }
+
+    List<String> getAllPhonemeSpellings() {
+        List<String> allSpellings = new ArrayList<>();
+        for (Map.Entry<String, List<String>> entry : phonemes.entrySet()) {
+            allSpellings.addAll(entry.getValue());
+        }
+        return allSpellings;
     }
 }
