@@ -1,7 +1,6 @@
 package edu.gatech.spellastory.data;
 
 import android.content.res.AssetManager;
-import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -35,9 +34,10 @@ public class Database {
         List<PhonemeWordsPair> wordsForLevel = new ArrayList<>();
         List<String> levelPhonemeCodes = Levels.getLevel(level);
         for (String phonemeCode : levelPhonemeCodes) {
+            Phoneme phoneme = new Phoneme(phonemeCode, phonemesDb.getPhonemeSpellings(phonemeCode).get(0));
             List<Word> wordsWithPhonemeCode = convertWordStringsToWordObjs(wordsDb.getWordsForPhonemeCode(phonemeCode));
             if (!wordsWithPhonemeCode.isEmpty()) {
-                wordsForLevel.add(new PhonemeWordsPair(phonemeCode, wordsWithPhonemeCode));
+                wordsForLevel.add(new PhonemeWordsPair(phoneme, wordsWithPhonemeCode));
             }
         }
         return wordsForLevel;

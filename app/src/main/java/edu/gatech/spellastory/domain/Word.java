@@ -1,8 +1,9 @@
 package edu.gatech.spellastory.domain;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Word {
+public class Word implements Serializable {
 
     private String spelling;
     private List<Phoneme> phonemes;
@@ -10,6 +11,14 @@ public class Word {
     public Word(String spelling, List<Phoneme> phonemes) {
         this.spelling = spelling;
         this.phonemes = phonemes;
+    }
+
+    public String getSpelling() {
+        return spelling;
+    }
+
+    public List<Phoneme> getPhonemes() {
+        return phonemes;
     }
 
     @Override
