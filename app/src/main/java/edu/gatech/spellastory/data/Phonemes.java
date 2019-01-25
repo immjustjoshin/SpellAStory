@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import edu.gatech.spellastory.domain.Phoneme;
+
 public class Phonemes {
 
     // Maps phoneme number to list of letter combos
@@ -47,10 +49,12 @@ public class Phonemes {
         return phonemes.get(codedPhoneme);
     }
 
-    List<String> getAllPhonemeSpellings() {
-        List<String> allSpellings = new ArrayList<>();
+    List<Phoneme> getAllPhonemes() {
+        List<Phoneme> allSpellings = new ArrayList<>();
         for (Map.Entry<String, List<String>> entry : phonemes.entrySet()) {
-            allSpellings.addAll(entry.getValue());
+            for (String spelling : entry.getValue()) {
+                allSpellings.add(new Phoneme(entry.getKey(), spelling));
+            }
         }
         return allSpellings;
     }

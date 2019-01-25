@@ -83,7 +83,7 @@ public class Database {
         return new Word(originalWord, phonemeObjs);
     }
 
-    public List<String> getAllPhonemeSpellings() {
-        return phonemesDb.getAllPhonemeSpellings();
+    public List<Phoneme> getAllPhonemes() {
+        return phonemesDb.getAllPhonemes();
     }
 }
