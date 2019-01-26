@@ -49,7 +49,7 @@ public class Phonemes {
         return phonemes.get(codedPhoneme);
     }
 
-    List<Phoneme> getAllPhonemes() {
+    public List<Phoneme> getAllPhonemes() {
         List<Phoneme> allSpellings = new ArrayList<>();
         for (Map.Entry<String, List<String>> entry : phonemes.entrySet()) {
             for (String spelling : entry.getValue()) {

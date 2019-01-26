@@ -18,10 +18,12 @@ public class Database {
     private Words wordsDb;
 
     public Database(AssetManager assets) throws IOException {
-        InputStreamReader phonemesReader = new InputStreamReader(assets.open("coded_phonemes.csv"));
+        InputStreamReader phonemesReader = new InputStreamReader
+                (assets.open("coded_phonemes.csv"));
         this.phonemesDb = new Phonemes(phonemesReader);
 
-        InputStreamReader wordsReader = new InputStreamReader(assets.open("coded_words.csv"));
+        InputStreamReader wordsReader = new InputStreamReader
+                (assets.open("coded_words.csv"));
         this.wordsDb = new Words(wordsReader);
     }
 
@@ -34,8 +36,10 @@ public class Database {
         List<PhonemeWordsPair> wordsForLevel = new ArrayList<>();
         List<String> levelPhonemeCodes = Levels.getLevel(level);
         for (String phonemeCode : levelPhonemeCodes) {
-            Phoneme phoneme = new Phoneme(phonemeCode, phonemesDb.getPhonemeSpellings(phonemeCode).get(0));
-            List<Word> wordsWithPhonemeCode = convertWordStringsToWordObjs(wordsDb.getWordsForPhonemeCode(phonemeCode));
+            Phoneme phoneme = new Phoneme
+                    (phonemeCode, phonemesDb.getPhonemeSpellings(phonemeCode).get(0));
+            List<Word> wordsWithPhonemeCode = convertWordStringsToWordObjs
+                    (wordsDb.getWordsForPhonemeCode(phonemeCode));
             if (!wordsWithPhonemeCode.isEmpty()) {
                 wordsForLevel.add(new PhonemeWordsPair(phoneme, wordsWithPhonemeCode));
             }
@@ -73,12 +77,14 @@ public class Database {
                     }
                 }
                 if (!foundSpelling) {
-                    throw new IllegalArgumentException(originalWord + " does not contain " + phonemeSpellings);
+                    throw new IllegalArgumentException
+                            (originalWord + " does not contain " + phonemeSpellings);
                 }
             }
         }
         if (word.length() > 0) {
-            throw new IllegalArgumentException("Did not encode letters " + word + " for word " + originalWord);
+            throw new IllegalArgumentException
+                    ("Did not encode letters " + word + " for word " + originalWord);
         }
         return new Word(originalWord, phonemeObjs);
     }
