@@ -49,8 +49,8 @@ public class GameActivity extends AppCompatActivity {
         wordTextView.setText(word.getSpelling());
         //There is probably a better way to do this. But for now, storing
         //layouts in this map
-        gridLayouts.put(9, new ArrayList<Integer>(Arrays.asList(3,3)));
-        gridLayouts.put(10, new ArrayList<Integer>(Arrays.asList(4,3)));
+        gridLayouts.put(9, new ArrayList<Integer>(Arrays.asList(3, 3)));
+        gridLayouts.put(10, new ArrayList<Integer>(Arrays.asList(4, 3)));
 
         rand = new Random(); //This random is not good! We should instantiate it
         //At the beginning of app instantiation.
@@ -59,7 +59,7 @@ public class GameActivity extends AppCompatActivity {
         setPhonemeButtons();
     }
 
-    List<Phoneme> generateGamePhonemeList(Word word){
+    List<Phoneme> generateGamePhonemeList(Word word) {
         Log.d("GENERATE", "Phoneme list being generated");
         List<Phoneme> phonemeList = new ArrayList<>(word.getPhonemes());
         List<Phoneme> allPhonemesList = null;
@@ -69,13 +69,13 @@ public class GameActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (allPhonemesList == null){
+        if (allPhonemesList == null) {
             throw new Error("Could not load from database");
         }
 
         //Adding random phonemes
-        while (size(phonemeList) < phonemeCount){
-            int randIndex = randInt(0,size(allPhonemesList) - 1);
+        while (size(phonemeList) < phonemeCount) {
+            int randIndex = randInt(0, size(allPhonemesList) - 1);
             Phoneme phonemeToAdd = allPhonemesList.get(randIndex);
             boolean duplicate = false;
             //making sure no duplicate spellings
@@ -92,13 +92,13 @@ public class GameActivity extends AppCompatActivity {
         return phonemeList;
     }
 
-    private void setPhonemeButtons(){
+    private void setPhonemeButtons() {
         GridLayout grid = findViewById(R.id.gameGrid);
         int columnCount = Objects.requireNonNull(gridLayouts.get(phonemeCount)).get(0);
         int rowCount = Objects.requireNonNull(gridLayouts.get(phonemeCount)).get(1);
         grid.setColumnCount(columnCount);
         grid.setRowCount(rowCount);
-        for (int i = 0; i < phonemeCount; i++){
+        for (int i = 0; i < phonemeCount; i++) {
             final Button phonemeButton = new Button(this);
             phonemeButton.setText(phonemeOptionsList.get(i).getSpelling());
             phonemeButton.setOnClickListener(new View.OnClickListener() {
@@ -106,18 +106,20 @@ public class GameActivity extends AppCompatActivity {
                     //Checking if correct answer
                     CharSequence buttonSpelling = phonemeButton.getText();
                     int spellingSize = buttonSpelling.length();
-                    if (word.getSpelling().length() >= letterIndex + spellingSize){
+                    if (word.getSpelling().length() >= letterIndex + spellingSize) {
                         CharSequence toMatch = word.getSpelling().substring
                                 (letterIndex, letterIndex + spellingSize);
-                        if (phonemeButton.getText().equals(toMatch)){
+                        if (phonemeButton.getText().equals(toMatch)) {
                             //Correct answer!
                             letterIndex += spellingSize;
                             TextView userSpelling = findViewById(R.id.userSpelling);
                             String newSpelling = userSpelling.getText().toString() + buttonSpelling.toString();
                             userSpelling.setText(newSpelling);
+                            v.setVisibility(View.INVISIBLE);
                         }
                     }
-                }});
+                }
+            });
             grid.addView(phonemeButton);
         }
     }
@@ -138,10 +140,6 @@ public class GameActivity extends AppCompatActivity {
     //3. Display Picture in Top Center of word
     //4. Display phoneme list on bottom (list of buttons)
     //5. Correct clicks advance the pictures. Incorrect clicks do nothing
-
-
-
-
 
 
 }
