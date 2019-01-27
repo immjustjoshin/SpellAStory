@@ -16,10 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 import edu.gatech.spellastory.data.Database;
-import edu.gatech.spellastory.data.Phonemes;
 import edu.gatech.spellastory.domain.Phoneme;
 import edu.gatech.spellastory.domain.Word;
 
@@ -28,9 +26,13 @@ import static org.apache.commons.collections.CollectionUtils.size;
 public class GameActivity extends AppCompatActivity {
 
     public static final String EX_WORD = "word";
-    public static final int phonemeNumber = 9;
+    private int letterIndex = 0;
+    private Word word = null;
+    public static final int phonemeCount = 9;
     public Map<Integer, List<Integer>> gridLayouts = new HashMap<>();
     private List<Phoneme> phonemeOptionsList;
+
+
     Random rand;
 
     @Override
@@ -39,7 +41,7 @@ public class GameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
         Intent intent = getIntent();
-        Word word = (Word) intent.getSerializableExtra(EX_WORD);
+        word = (Word) intent.getSerializableExtra(EX_WORD);
 
         TextView wordTextView = findViewById(R.id.wordTextView);
         wordTextView.setText(word.getSpelling());
@@ -52,6 +54,7 @@ public class GameActivity extends AppCompatActivity {
         //At the beginning of app instantiation.
 
         phonemeOptionsList = generateGamePhonemeList(word);
+        setPhonemeButtons();
     }
 
     List<Phoneme> generateGamePhonemeList(Word word){
@@ -68,7 +71,7 @@ public class GameActivity extends AppCompatActivity {
         }
 
         //Adding random phonemes
-        while (size(phonemeList) < phonemeNumber){
+        while (size(phonemeList) < phonemeCount){
             int randIndex = randInt(0,size(allPhonemesList));
             Phoneme phonemeToAdd = allPhonemesList.get(randIndex);
             boolean duplicate = false;
@@ -81,26 +84,35 @@ public class GameActivity extends AppCompatActivity {
             if (!duplicate) {
                 phonemeList.add(phonemeToAdd);
             }
-
         }
-
         return phonemeList;
     }
 
-    private void setButtonListeners(){
+    private void setPhonemeButtons(){
         GridLayout grid = findViewById(R.id.gameGrid);
-        int columnCount = Objects.requireNonNull(gridLayouts.get(phonemeNumber)).get(0);
-        int rowCount = Objects.requireNonNull(gridLayouts.get(phonemeNumber)).get(1);
+        int columnCount = Objects.requireNonNull(gridLayouts.get(phonemeCount)).get(0);
+        int rowCount = Objects.requireNonNull(gridLayouts.get(phonemeCount)).get(1);
         grid.setColumnCount(columnCount);
         grid.setRowCount(rowCount);
-        for (int i = 0; i < phonemeNumber; i++){
-            final Button phonemeSelection = new Button(this);
-            phonemeSelection.setText(phonemeOptionsList.get(i).getSpelling());
-            phonemeSelection.setOnClickListener(new View.OnClickListener() {
+        for (int i = 0; i < phonemeCount; i++){
+            final Button phonemeButton = new Button(this);
+            phonemeButton.setText(phonemeOptionsList.get(i).getSpelling());
+            phonemeButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    phonemeSelection.getText();
+                    //Checking if correct answer
+                    CharSequence buttonSpelling = phonemeButton.getText();
+                    int spellingSize = size(buttonSpelling);
+                    CharSequence toMatch = word.getSpelling().substring
+                            (letterIndex, letterIndex + spellingSize);
+                    if (phonemeButton.getText().equals(toMatch)){
+                        //Correct answer!
+                        letterIndex += spellingSize;
+                        TextView userSpelling = findViewById(R.id.userSpelling);
+                        String newSpelling = userSpelling.getText().toString() + buttonSpelling.toString();
+                        userSpelling.setText(newSpelling);
+                    }
                 }});
-            grid.addView(phonemeSelection);
+            grid.addView(phonemeButton);
         }
     }
 
