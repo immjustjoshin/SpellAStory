@@ -3,14 +3,16 @@ package edu.gatech.spellastory;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayout;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.GridLayout;
 import android.widget.TextView;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +60,7 @@ public class GameActivity extends AppCompatActivity {
     }
 
     List<Phoneme> generateGamePhonemeList(Word word){
+        Log.d("GENERATE", "Phoneme list being generated");
         List<Phoneme> phonemeList = new ArrayList<>(word.getPhonemes());
         List<Phoneme> allPhonemesList = null;
         try {
@@ -72,7 +75,7 @@ public class GameActivity extends AppCompatActivity {
 
         //Adding random phonemes
         while (size(phonemeList) < phonemeCount){
-            int randIndex = randInt(0,size(allPhonemesList));
+            int randIndex = randInt(0,size(allPhonemesList) - 1);
             Phoneme phonemeToAdd = allPhonemesList.get(randIndex);
             boolean duplicate = false;
             //making sure no duplicate spellings
@@ -85,6 +88,7 @@ public class GameActivity extends AppCompatActivity {
                 phonemeList.add(phonemeToAdd);
             }
         }
+        Collections.shuffle(phonemeList);
         return phonemeList;
     }
 
@@ -101,15 +105,17 @@ public class GameActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     //Checking if correct answer
                     CharSequence buttonSpelling = phonemeButton.getText();
-                    int spellingSize = size(buttonSpelling);
-                    CharSequence toMatch = word.getSpelling().substring
-                            (letterIndex, letterIndex + spellingSize);
-                    if (phonemeButton.getText().equals(toMatch)){
-                        //Correct answer!
-                        letterIndex += spellingSize;
-                        TextView userSpelling = findViewById(R.id.userSpelling);
-                        String newSpelling = userSpelling.getText().toString() + buttonSpelling.toString();
-                        userSpelling.setText(newSpelling);
+                    int spellingSize = buttonSpelling.length();
+                    if (word.getSpelling().length() >= letterIndex + spellingSize){
+                        CharSequence toMatch = word.getSpelling().substring
+                                (letterIndex, letterIndex + spellingSize);
+                        if (phonemeButton.getText().equals(toMatch)){
+                            //Correct answer!
+                            letterIndex += spellingSize;
+                            TextView userSpelling = findViewById(R.id.userSpelling);
+                            String newSpelling = userSpelling.getText().toString() + buttonSpelling.toString();
+                            userSpelling.setText(newSpelling);
+                        }
                     }
                 }});
             grid.addView(phonemeButton);
