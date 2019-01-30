@@ -9,8 +9,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".phoneme_list.PhonemeListActivity" />
         <activity android:name=".GameActivity" />
-        <activity android:name=".phoneme_list.PhonemeListActivity" >
+        <activity android:name=".menu.LevelSelectMenu" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
