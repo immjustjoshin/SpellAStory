@@ -1,15 +1,18 @@
 package edu.gatech.spellastory;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayout;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -45,8 +48,8 @@ public class GameActivity extends AppCompatActivity {
         Intent intent = getIntent();
         word = (Word) intent.getSerializableExtra(EX_WORD);
 
-        TextView wordTextView = findViewById(R.id.wordTextView);
-        wordTextView.setText(word.getSpelling());
+        setPictureFor(word);
+
         //There is probably a better way to do this. But for now, storing
         //layouts in this map
         gridLayouts.put(9, new ArrayList<Integer>(Arrays.asList(3, 3)));
@@ -121,6 +124,23 @@ public class GameActivity extends AppCompatActivity {
                 }
             });
             grid.addView(phonemeButton);
+        }
+    }
+
+    /**
+     * Sets the picture that is seen in the game play
+     * @param word the word associated with the picture
+     */
+    private void setPictureFor(Word word) {
+        ImageButton pictureImageButton = findViewById(R.id.imageButton_picture);
+
+        try {
+            InputStream ims = getAssets().open("pictures/" + word.getSpelling() + ".png");
+            Drawable d = Drawable.createFromStream(ims, null);
+            pictureImageButton.setImageDrawable(d);
+        } catch (IOException e) {
+            // Could not find picture associated with the word
+            e.printStackTrace();
         }
     }
 

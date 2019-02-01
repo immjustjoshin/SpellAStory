@@ -4,9 +4,10 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <Button
-        android:id="@+id/btn_image_placeholder"
+    <ImageButton
+        android:id="@+id/imageButton_picture"
         android:layout_width="225dp"
-        android:layout_height="150dp" />
-
+        android:layout_height="150dp"
+        android:scaleType="fitCenter"
+        android:contentDescription="@string/picture" />
 </LinearLayout>
