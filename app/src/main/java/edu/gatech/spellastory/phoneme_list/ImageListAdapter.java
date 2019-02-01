@@ -53,7 +53,7 @@ public class ImageListAdapter extends
             Drawable d = Drawable.createFromStream(ims, null);
             viewHolder.pictureImageButton.setImageDrawable(d);
         } catch (IOException e) {
-            // Could not find picture associated with the word
+            // Could not find picture file associated with the word
             e.printStackTrace();
         }
     }

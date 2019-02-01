@@ -1,8 +1,11 @@
 package edu.gatech.spellastory;
 
 import android.content.Intent;
+import android.content.res.AssetFileDescriptor;
 import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayout;
 import android.util.Log;
@@ -36,6 +39,7 @@ public class GameActivity extends AppCompatActivity {
     public static final int phonemeCount = 9;
     public Map<Integer, List<Integer>> gridLayouts = new HashMap<>();
     private List<Phoneme> phonemeOptionsList;
+    private ImageButton pictureImageButton;
 
 
     Random rand;
@@ -48,7 +52,15 @@ public class GameActivity extends AppCompatActivity {
         Intent intent = getIntent();
         word = (Word) intent.getSerializableExtra(EX_WORD);
 
+        pictureImageButton = (ImageButton) findViewById(R.id.imageButton_picture);
         setPictureFor(word);
+        final MediaPlayer mp = setAudioFor(word);
+        pictureImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mp.start();
+            }
+        });
 
         //There is probably a better way to do this. But for now, storing
         //layouts in this map
@@ -132,7 +144,7 @@ public class GameActivity extends AppCompatActivity {
      * @param word the word associated with the picture
      */
     private void setPictureFor(Word word) {
-        ImageButton pictureImageButton = findViewById(R.id.imageButton_picture);
+        pictureImageButton = findViewById(R.id.imageButton_picture);
 
         try {
             InputStream ims = getAssets().open("pictures/" + word.getSpelling() + ".png");
@@ -142,6 +154,25 @@ public class GameActivity extends AppCompatActivity {
             // Could not find picture associated with the word
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Sets audio for the picture used in game play
+     * @param word word associated with the picture
+     * @return MediaPlayer object that will play the audio for the picture
+     */
+    private MediaPlayer setAudioFor(Word word) {
+        MediaPlayer mp = new MediaPlayer();
+        try {
+            AssetFileDescriptor afd = getAssets().openFd("audio/words/" + word.getSpelling() + ".mp3");
+            mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+            afd.close();
+            mp.prepare();
+        } catch (IOException e) {
+            // Could not find audio file associated with the word
+            e.printStackTrace();
+        }
+        return mp;
     }
 
     public int randInt(int min, int max) {
