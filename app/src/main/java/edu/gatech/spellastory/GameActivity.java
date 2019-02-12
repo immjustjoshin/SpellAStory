@@ -115,7 +115,8 @@ public class GameActivity extends AppCompatActivity {
         grid.setRowCount(rowCount);
         for (int i = 0; i < phonemeCount; i++) {
             final Button phonemeButton = new Button(this);
-            phonemeButton.setText(phonemeOptionsList.get(i).getSpelling());
+            final Phoneme phoneme = phonemeOptionsList.get(i);
+            phonemeButton.setText(phoneme.getSpelling());
             phonemeButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     //Checking if correct answer
@@ -133,8 +134,20 @@ public class GameActivity extends AppCompatActivity {
                             v.setVisibility(View.INVISIBLE);
                         }
                     }
+                    // Plays phoneme audio on tap
+                    setAudioFor(phoneme).start();
                 }
             });
+
+            phonemeButton.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    // Plays phoneme audio on long press
+                    setAudioFor(phoneme).start();
+                    return true;
+                }
+            });
+
             grid.addView(phonemeButton);
         }
     }
@@ -170,6 +183,25 @@ public class GameActivity extends AppCompatActivity {
             mp.prepare();
         } catch (IOException e) {
             // Could not find audio file associated with the word
+            e.printStackTrace();
+        }
+        return mp;
+    }
+
+    /**
+     * Sets audio for the phoneme options used in game play
+     * @param phoneme one of the phoneme options
+     * @return MediaPlayer object that will play the audio for the phoneme
+     */
+    private MediaPlayer setAudioFor(Phoneme phoneme) {
+        MediaPlayer mp = new MediaPlayer();
+        try {
+            AssetFileDescriptor afd = getAssets().openFd("audio/phonemes/" + phoneme.getSpelling() + "(" + phoneme.getCode() + ").mp3");
+            mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+            afd.close();
+            mp.prepare();
+        } catch (IOException e) {
+            // Could not find audio file associate with the word
             e.printStackTrace();
         }
         return mp;
