@@ -8,11 +8,18 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayout;
+import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.SpannedString;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,7 +47,9 @@ public class GameActivity extends AppCompatActivity {
     public Map<Integer, List<Integer>> gridLayouts = new HashMap<>();
     private List<Phoneme> phonemeOptionsList;
     private ImageButton pictureImageButton;
-
+    private TextView userSpelling;
+    private boolean wordSpelled = false;
+    private String toSpell = "";
 
     Random rand;
 
@@ -49,10 +58,28 @@ public class GameActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+        userSpelling = findViewById(R.id.userSpelling);
         Intent intent = getIntent();
         word = (Word) intent.getSerializableExtra(EX_WORD);
+        String startingUnderlines = "";
+        //Create starting underlines and get correct letter spelling order (without silents)
+        for (Phoneme phoneme: word.getPhonemes()){
+            for (int i = 0; i < phoneme.getSpelling().length(); i++) {
+                if (phoneme.getCode().equals("0")) {
+                    //if it's a silent then it must appear at start.
+                    startingUnderlines = startingUnderlines.
+                            concat("<font color='green'><u>" + phoneme.getSpelling().charAt(i)+ "</u></font> ");
+                } else {
+                    toSpell = toSpell.concat(String.valueOf(phoneme.getSpelling().charAt(i)));
+                    startingUnderlines = startingUnderlines.
+                            concat("<u>" + "_" + "</u> ");
+                }
+            }
+        }
 
-        pictureImageButton = (ImageButton) findViewById(R.id.imageButton_picture);
+        userSpelling.setText(Html.fromHtml(startingUnderlines), TextView.BufferType.SPANNABLE);
+
+        pictureImageButton = findViewById(R.id.imageButton_picture);
         setPictureFor(word);
         final MediaPlayer mp = setAudioFor(word);
         pictureImageButton.setOnClickListener(new View.OnClickListener() {
@@ -76,7 +103,13 @@ public class GameActivity extends AppCompatActivity {
 
     List<Phoneme> generateGamePhonemeList(Word word) {
         Log.d("GENERATE", "Phoneme list being generated");
-        List<Phoneme> phonemeList = new ArrayList<>(word.getPhonemes());
+        List<Phoneme> phonemeList = new ArrayList<>();
+        for (Phoneme correctPhoneme : word.getPhonemes())
+        {
+            if  (!correctPhoneme.getCode().equals("0")){
+                phonemeList.add(correctPhoneme);
+            }
+        }
         List<Phoneme> allPhonemesList = null;
         try {
             Database db = new Database(getAssets());
@@ -93,13 +126,18 @@ public class GameActivity extends AppCompatActivity {
             int randIndex = randInt(0, size(allPhonemesList) - 1);
             Phoneme phonemeToAdd = allPhonemesList.get(randIndex);
             boolean duplicate = false;
+            boolean silent = false;
             //making sure no duplicate spellings
-            for (Phoneme correctPhoneme : phonemeList) {
-                if (correctPhoneme.getSpelling().contains(phonemeToAdd.getSpelling())) {
+            for (Phoneme phoneme : phonemeList) {
+                if (phoneme.getSpelling().contains(phonemeToAdd.getSpelling())) {
                     duplicate = true;
                 }
+                if (phoneme.getCode().equals("0"))
+                {
+                    silent = true;
+                }
             }
-            if (!duplicate) {
+            if (!duplicate && !silent) {
                 phonemeList.add(phonemeToAdd);
             }
         }
@@ -122,15 +160,22 @@ public class GameActivity extends AppCompatActivity {
                     //Checking if correct answer
                     CharSequence buttonSpelling = phonemeButton.getText();
                     int spellingSize = buttonSpelling.length();
-                    if (word.getSpelling().length() >= letterIndex + spellingSize) {
-                        CharSequence toMatch = word.getSpelling().substring
+                    if (toSpell.length() >= letterIndex + spellingSize) {
+                        CharSequence toMatch = toSpell.substring
                                 (letterIndex, letterIndex + spellingSize);
                         if (phonemeButton.getText().equals(toMatch)) {
                             //Correct answer!
                             letterIndex += spellingSize;
-                            TextView userSpelling = findViewById(R.id.userSpelling);
-                            String newSpelling = userSpelling.getText().toString() + buttonSpelling.toString();
-                            userSpelling.setText(newSpelling);
+                            //Should do a check of isInstance here
+                            Spannable userSpellingString = (Spannable) userSpelling.getText();
+                            String newSpelling = Html.toHtml(userSpellingString);
+                            for (int i = 0; i < phonemeButton.getText().length(); i++){
+                                int indexToChange = newSpelling.indexOf("_");
+                                newSpelling = newSpelling.substring(0, indexToChange)
+                                        + phonemeButton.getText().charAt(i) +
+                                        newSpelling.substring(indexToChange + 1);
+                            }
+                            userSpelling.setText(Html.fromHtml(newSpelling), TextView.BufferType.SPANNABLE);
                             v.setVisibility(View.INVISIBLE);
                         }
                     }
@@ -212,17 +257,4 @@ public class GameActivity extends AppCompatActivity {
         //The leaps and bounds I go to generate something random...
         return rand.nextInt((max - min) + 1) + min;
     }
-
-
-    //FindviewbyID -- cast to a button
-    //Set text
-
-    //Things that need to happen
-    //1. Get the Word to be spelled from Phoneme ListActivity
-    //2. Generate list with Word phoneme sequence and random phonemes (cannot match spelling!)
-    //3. Display Picture in Top Center of word
-    //4. Display phoneme list on bottom (list of buttons)
-    //5. Correct clicks advance the pictures. Incorrect clicks do nothing
-
-
 }
