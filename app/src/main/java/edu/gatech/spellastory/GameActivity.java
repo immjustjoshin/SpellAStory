@@ -5,21 +5,15 @@ import android.content.res.AssetFileDescriptor;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayout;
 import android.text.Html;
 import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.SpannedString;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
-
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -63,12 +57,12 @@ public class GameActivity extends AppCompatActivity {
         word = (Word) intent.getSerializableExtra(EX_WORD);
         String startingUnderlines = "";
         //Create starting underlines and get correct letter spelling order (without silents)
-        for (Phoneme phoneme: word.getPhonemes()){
+        for (Phoneme phoneme : word.getPhonemes()) {
             for (int i = 0; i < phoneme.getSpelling().length(); i++) {
                 if (phoneme.getCode().equals("0")) {
                     //if it's a silent then it must appear at start.
                     startingUnderlines = startingUnderlines.
-                            concat("<font color='green'><u>" + phoneme.getSpelling().charAt(i)+ "</u></font> ");
+                            concat("<font color='green'><u>" + phoneme.getSpelling().charAt(i) + "</u></font> ");
                 } else {
                     toSpell = toSpell.concat(String.valueOf(phoneme.getSpelling().charAt(i)));
                     startingUnderlines = startingUnderlines.
@@ -104,9 +98,8 @@ public class GameActivity extends AppCompatActivity {
     List<Phoneme> generateGamePhonemeList(Word word) {
         Log.d("GENERATE", "Phoneme list being generated");
         List<Phoneme> phonemeList = new ArrayList<>();
-        for (Phoneme correctPhoneme : word.getPhonemes())
-        {
-            if  (!correctPhoneme.getCode().equals("0")){
+        for (Phoneme correctPhoneme : word.getPhonemes()) {
+            if (!correctPhoneme.getCode().equals("0")) {
                 phonemeList.add(correctPhoneme);
             }
         }
@@ -132,8 +125,7 @@ public class GameActivity extends AppCompatActivity {
                 if (phoneme.getSpelling().contains(phonemeToAdd.getSpelling())) {
                     duplicate = true;
                 }
-                if (phoneme.getCode().equals("0"))
-                {
+                if (phoneme.getCode().equals("0")) {
                     silent = true;
                 }
             }
@@ -169,7 +161,7 @@ public class GameActivity extends AppCompatActivity {
                             //Should do a check of isInstance here
                             Spannable userSpellingString = (Spannable) userSpelling.getText();
                             String newSpelling = Html.toHtml(userSpellingString);
-                            for (int i = 0; i < phonemeButton.getText().length(); i++){
+                            for (int i = 0; i < phonemeButton.getText().length(); i++) {
                                 int indexToChange = newSpelling.indexOf("_");
                                 newSpelling = newSpelling.substring(0, indexToChange)
                                         + phonemeButton.getText().charAt(i) +
@@ -199,6 +191,7 @@ public class GameActivity extends AppCompatActivity {
 
     /**
      * Sets the picture that is seen in the game play
+     *
      * @param word the word associated with the picture
      */
     private void setPictureFor(Word word) {
@@ -216,6 +209,7 @@ public class GameActivity extends AppCompatActivity {
 
     /**
      * Sets audio for the picture used in game play
+     *
      * @param word word associated with the picture
      * @return MediaPlayer object that will play the audio for the picture
      */
@@ -235,6 +229,7 @@ public class GameActivity extends AppCompatActivity {
 
     /**
      * Sets audio for the phoneme options used in game play
+     *
      * @param phoneme one of the phoneme options
      * @return MediaPlayer object that will play the audio for the phoneme
      */
