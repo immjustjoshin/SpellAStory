@@ -95,7 +95,7 @@ public class GameActivity extends AppCompatActivity {
         gridLayouts.put(10, new ArrayList<Integer>(Arrays.asList(4, 3)));
 
         rand = new Random(); //This random is not good! We should instantiate it
-        //At the beginning of app instantiation.
+        // At the beginning of app instantiation.
 
         phonemeOptionsList = generateGamePhonemeList(word);
         setPhonemeButtons();

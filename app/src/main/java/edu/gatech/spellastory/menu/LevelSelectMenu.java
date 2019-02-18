@@ -16,13 +16,25 @@ public class LevelSelectMenu extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.level_select);
 
-        Button next = findViewById(R.id.button_level5);
-        next.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                Intent myIntent = new Intent(view.getContext(), PhonemeListActivity.class);
-                startActivityForResult(myIntent, 0);
-            }
+        Button lv5 = findViewById(R.id.button_level5);
+        Button lv6 = findViewById(R.id.button_level6);
+        Button lv7 = findViewById(R.id.button_level7);
+        Button lv8 = findViewById(R.id.button_level8);
 
+        setLevelButtonClickListener(lv5, 5);
+        setLevelButtonClickListener(lv6, 6);
+        setLevelButtonClickListener(lv7, 7);
+        setLevelButtonClickListener(lv8, 8);
+    }
+
+    private void setLevelButtonClickListener(Button button, final int level) {
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(v.getContext(), PhonemeListActivity.class);
+                i.putExtra(PhonemeListActivity.EX_LEVEL, level);
+                startActivity(i);
+            }
         });
     }
 

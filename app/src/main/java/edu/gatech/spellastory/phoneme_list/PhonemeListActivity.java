@@ -18,12 +18,15 @@ import edu.gatech.spellastory.domain.Word;
 public class PhonemeListActivity extends AppCompatActivity implements PhonemeListAdapter.WordClickListener {
 
     private static final String TAG = PhonemeListActivity.class.getSimpleName();
-    private static final int LEVEL = 5;
+    public static final String EX_LEVEL = "level";
+    private int level;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_phoneme_list);
+
+        level = getIntent().getIntExtra(EX_LEVEL, 0);
 
         initView();
     }
@@ -39,7 +42,7 @@ public class PhonemeListActivity extends AppCompatActivity implements PhonemeLis
     private List<PhonemeWordsPair> getLevelData() {
         try {
             Database db = new Database(getAssets());
-            return db.getWordsForLevel(LEVEL);
+            return db.getWordsForLevel(level);
         } catch (IOException e) {
             e.printStackTrace();
         }

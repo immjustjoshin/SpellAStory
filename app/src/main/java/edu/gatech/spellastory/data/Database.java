@@ -68,6 +68,9 @@ public class Database {
             } else {
                 List<String> phonemeSpellings = phonemesDb.getPhonemeSpellings(codedPhoneme);
                 boolean foundSpelling = false;
+                if (phonemeSpellings == null || phonemeSpellings.isEmpty()) {
+                    throw new IllegalArgumentException("No spellings for phoneme " + codedPhoneme);
+                }
                 for (String phonemeSpelling : phonemeSpellings) {
                     if (word.startsWith(phonemeSpelling)) {
                         Phoneme phoneme = new Phoneme(codedPhoneme, phonemeSpelling);
