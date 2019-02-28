@@ -38,8 +38,7 @@ public class Database {
         for (String phonemeCode : levelPhonemeCodes) {
             Phoneme phoneme = new Phoneme
                     (phonemeCode, phonemesDb.getPhonemeSpellings(phonemeCode).get(0));
-            List<Word> wordsWithPhonemeCode = convertWordStringsToWordObjs
-                    (wordsDb.getWordsForPhonemeCode(phonemeCode));
+            List<Word> wordsWithPhonemeCode = getWordsForPhonemeCode(phonemeCode);
             if (!wordsWithPhonemeCode.isEmpty()) {
                 wordsForLevel.add(new PhonemeWordsPair(phoneme, wordsWithPhonemeCode));
             }
@@ -47,12 +46,14 @@ public class Database {
         return wordsForLevel;
     }
 
-    private List<Word> convertWordStringsToWordObjs(List<String> wordStrings) {
-        List<Word> wordObjs = new ArrayList<>();
-        for (String wordString : wordStrings) {
-            wordObjs.add(getWord(wordString));
+    private List<Word> getWordsForPhonemeCode(String phonemeCode) {
+        List<Word> wordsContainingPhonemeCode = new ArrayList<>();
+        for (String word : wordsDb.getAllWords()) {
+            if (wordsDb.wordContains(word, phonemeCode)) {
+                wordsContainingPhonemeCode.add(getWord(word));
+            }
         }
-        return wordObjs;
+        return wordsContainingPhonemeCode;
     }
 
     private Word getWord(String word) {

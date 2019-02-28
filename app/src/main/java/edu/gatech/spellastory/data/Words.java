@@ -9,17 +9,17 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
-public class Words {
+class Words {
 
     // Maps word to phoneme codes
     // Ex. swan -> [95,3,61]
     private Map<String, List<String>> words;
 
-    public Words(Reader csvReader) {
+    Words(Reader csvReader) {
         words = readWords(csvReader);
     }
 
@@ -30,7 +30,7 @@ public class Words {
             String[] nextLine;
             while ((nextLine = reader.readNext()) != null) {
                 String word = nextLine[0];
-                String[] coded_phonemes = Arrays.copyOfRange(nextLine, 1, nextLine.length);
+                String[] coded_phonemes = Arrays.copyOfRange(nextLine, 2, nextLine.length);
                 phonemes.put(word, Arrays.asList(coded_phonemes));
             }
             return phonemes;
@@ -42,23 +42,17 @@ public class Words {
         return null;
     }
 
-    public List<String> getPhonemeCodesForWord(String word) {
+    List<String> getPhonemeCodesForWord(String word) {
         return words.get(word);
     }
 
-    public List<String> getAllWords() {
+    List<String> getAllWords() {
         return new ArrayList<>(words.keySet());
     }
 
-    public List<String> getWordsForPhonemeCode(String phonemeCode) {
-        List<String> wordsContainingPhonemeCode = new ArrayList<>();
-        for (Map.Entry<String, List<String>> entry : words.entrySet()) {
-            String word = entry.getKey();
-            List<String> phonemeCodes = entry.getValue();
-            if (phonemeCodes.contains(phonemeCode)) {
-                wordsContainingPhonemeCode.add(word);
-            }
-        }
-        return wordsContainingPhonemeCode;
+    boolean wordContains(String word, String phonemeCode) {
+        return words.containsKey(word)
+                && Objects.requireNonNull(words.get(word)).contains(phonemeCode);
     }
+
 }
