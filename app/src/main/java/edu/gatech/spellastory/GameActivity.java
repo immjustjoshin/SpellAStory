@@ -36,16 +36,15 @@ public class GameActivity extends AppCompatActivity {
 
     public static final String EX_WORD = "word";
     private int letterIndex = 0;
-    private Word word = null;
-    public static final int phonemeCount = 9;
-    public Map<Integer, List<Integer>> gridLayouts = new HashMap<>();
+    private static final int phonemeCount = 9;
+    private Map<Integer, List<Integer>> gridLayouts = new HashMap<>();
     private List<Phoneme> phonemeOptionsList;
     private ImageButton pictureImageButton;
     private TextView userSpelling;
     private boolean wordSpelled = false;
     private String toSpell = "";
 
-    Random rand;
+    private Random rand;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +53,7 @@ public class GameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_game);
         userSpelling = findViewById(R.id.userSpelling);
         Intent intent = getIntent();
-        word = (Word) intent.getSerializableExtra(EX_WORD);
+        Word word = (Word) intent.getSerializableExtra(EX_WORD);
         String startingUnderlines = "";
         //Create starting underlines and get correct letter spelling order (without silents)
         for (Phoneme phoneme : word.getPhonemes()) {
@@ -85,8 +84,8 @@ public class GameActivity extends AppCompatActivity {
 
         //There is probably a better way to do this. But for now, storing
         //layouts in this map
-        gridLayouts.put(9, new ArrayList<Integer>(Arrays.asList(3, 3)));
-        gridLayouts.put(10, new ArrayList<Integer>(Arrays.asList(4, 3)));
+        gridLayouts.put(9, new ArrayList<>(Arrays.asList(3, 3)));
+        gridLayouts.put(10, new ArrayList<>(Arrays.asList(4, 3)));
 
         rand = new Random(); //This random is not good! We should instantiate it
         // At the beginning of app instantiation.
@@ -95,7 +94,7 @@ public class GameActivity extends AppCompatActivity {
         setPhonemeButtons();
     }
 
-    List<Phoneme> generateGamePhonemeList(Word word) {
+    private List<Phoneme> generateGamePhonemeList(Word word) {
         Log.d("GENERATE", "Phoneme list being generated");
         List<Phoneme> phonemeList = new ArrayList<>();
         for (Phoneme correctPhoneme : word.getPhonemes()) {
@@ -247,7 +246,7 @@ public class GameActivity extends AppCompatActivity {
         return mp;
     }
 
-    public int randInt(int min, int max) {
+    private int randInt(int min, int max) {
 
         //The leaps and bounds I go to generate something random...
         return rand.nextInt((max - min) + 1) + min;

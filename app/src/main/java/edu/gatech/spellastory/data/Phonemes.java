@@ -13,13 +13,13 @@ import java.util.Map;
 
 import edu.gatech.spellastory.domain.Phoneme;
 
-public class Phonemes {
+class Phonemes {
 
     // Maps phoneme number to list of letter combos
     // Ex. 1 -> [a], 84 -> [s,ss]
     private Map<String, List<String>> phonemes;
 
-    public Phonemes(Reader csvReader) {
+    Phonemes(Reader csvReader) {
         phonemes = readPhonemes(csvReader);
     }
 

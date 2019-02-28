@@ -3,7 +3,7 @@ package edu.gatech.spellastory.data;
 import java.util.Arrays;
 import java.util.List;
 
-public class Levels {
+class Levels {
 
     private static final List<String> LV5 = Arrays.asList("14", "15", "18", "19", "20", "21", "23", "37", "38", "41", "42", "62", "63", "64", "80", "81", "82", "86", "87", "88", "89", "90", "91", "92", "93", "94", "95", "97", "98", "99", "100", "108");
     private static final List<String> LV6 = Arrays.asList("5", "6", "10", "11", "12", "27", "28", "29", "30", "34", "35", "47", "48", "68", "69", "70", "71", "72", "75", "76", "77", "78", "104");
