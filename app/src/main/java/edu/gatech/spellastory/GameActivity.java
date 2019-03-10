@@ -1,6 +1,7 @@
 package edu.gatech.spellastory;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
@@ -48,37 +49,25 @@ public class GameActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+
         userSpelling = findViewById(R.id.userSpelling);
+        pictureImageButton = findViewById(R.id.imageButton_picture);
         Intent intent = getIntent();
         Word word = (Word) intent.getSerializableExtra(EX_WORD);
-        String startingUnderlines = "";
-        //Create starting underlines and get correct letter spelling order (without silents)
-        for (Phoneme phoneme : word.getPhonemes()) {
-            for (int i = 0; i < phoneme.getSpelling().length(); i++) {
-                if (phoneme.getCode().equals("0")) {
-                    //if it's a silent then it must appear at start.
-                    startingUnderlines = startingUnderlines.
-                            concat("<font color='green'><u>" + phoneme.getSpelling().charAt(i) + "</u></font> ");
-                } else {
-                    toSpell = toSpell.concat(String.valueOf(phoneme.getSpelling().charAt(i)));
-                    startingUnderlines = startingUnderlines.
-                            concat("<u>" + "_" + "</u> ");
-                }
-            }
-        }
 
+        // Sets up initial underlines and silent letters
+        String startingUnderlines = setUpUnderlines(word);
         userSpelling.setText(Html.fromHtml(startingUnderlines), TextView.BufferType.SPANNABLE);
 
-        pictureImageButton = findViewById(R.id.imageButton_picture);
+        // Sets up audio for word
         setPictureFor(word);
-        final MediaPlayer mp = setAudioFor(word);
+        final MediaPlayer picture = setAudioFor(word);
         pictureImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mp.start();
+                picture.start();
             }
         });
 
@@ -91,7 +80,7 @@ public class GameActivity extends AppCompatActivity {
         // At the beginning of app instantiation.
 
         phonemeOptionsList = generateGamePhonemeList(word);
-        setPhonemeButtons();
+        setPhonemeButtons(word);
     }
 
     private List<Phoneme> generateGamePhonemeList(Word word) {
@@ -136,7 +125,7 @@ public class GameActivity extends AppCompatActivity {
         return phonemeList;
     }
 
-    private void setPhonemeButtons() {
+    private void setPhonemeButtons(final Word word) {
         GridLayout grid = findViewById(R.id.gameGrid);
         int columnCount = Objects.requireNonNull(gridLayouts.get(phonemeCount)).get(0);
         int rowCount = Objects.requireNonNull(gridLayouts.get(phonemeCount)).get(1);
@@ -155,9 +144,9 @@ public class GameActivity extends AppCompatActivity {
                         CharSequence toMatch = toSpell.substring
                                 (letterIndex, letterIndex + spellingSize);
                         if (phonemeButton.getText().equals(toMatch)) {
-                            //Correct answer!
+                            // Correct answer!
                             letterIndex += spellingSize;
-                            //Should do a check of isInstance here
+                            // Should do a check of isInstance here
                             Spannable userSpellingString = (Spannable) userSpelling.getText();
                             String newSpelling = Html.toHtml(userSpellingString);
                             for (int i = 0; i < phonemeButton.getText().length(); i++) {
@@ -168,10 +157,19 @@ public class GameActivity extends AppCompatActivity {
                             }
                             userSpelling.setText(Html.fromHtml(newSpelling), TextView.BufferType.SPANNABLE);
                             v.setVisibility(View.INVISIBLE);
+
+                            // Plays positive audio if user chooses the correct answer
+                            if (toSpell.length() != letterIndex) {
+                                playPositiveSound().start();
+                            } else {
+                                // User has spelled the word completely!
+                                markWordAsComplete(word);
+                            }
+                        } else {
+                            // Incorrect answer!
+                            playNegativeSound().start();
                         }
                     }
-                    // Plays phoneme audio on tap
-                    setAudioFor(phoneme).start();
                 }
             });
 
@@ -204,6 +202,31 @@ public class GameActivity extends AppCompatActivity {
             // Could not find picture associated with the word
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Sets up the starting underlines of the word being spelled.
+     * Inputs any silent letters which are color coded green.
+     * @param word word user is spelling
+     * @return correct letter spelling order (without silent letters)
+     */
+    private String setUpUnderlines(Word word) {
+        String startingUnderlines = "";
+        //Create starting underlines and get correct letter spelling order (without silents)
+        for (Phoneme phoneme : word.getPhonemes()) {
+            for (int i = 0; i < phoneme.getSpelling().length(); i++) {
+                if (phoneme.getCode().equals("0")) {
+                    //if it's a silent then it must appear at start.
+                    startingUnderlines = startingUnderlines.
+                            concat("<font color='green'><u>" + phoneme.getSpelling().charAt(i) + "</u></font> ");
+                } else {
+                    toSpell = toSpell.concat(String.valueOf(phoneme.getSpelling().charAt(i)));
+                    startingUnderlines = startingUnderlines.
+                            concat("<u>" + "_" + "</u> ");
+                }
+            }
+        }
+        return startingUnderlines;
     }
 
     /**
@@ -244,6 +267,53 @@ public class GameActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return mp;
+    }
+
+    /**
+     * Plays positive sound when user chooses the correct phoneme.
+     * @return MediaPlayer with positive sound
+     */
+    private MediaPlayer playPositiveSound() {
+        MediaPlayer mp = new MediaPlayer();
+        try {
+            AssetFileDescriptor afd = getAssets().openFd("audio/Ding.mp3");
+            mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+            afd.close();
+            mp.prepare();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return mp;
+    }
+
+    /**
+     * Plays encouraging audio when user chooses wrong phoneme.
+     * @return MediaPlayer with encouraging audio
+     */
+    private MediaPlayer playNegativeSound() {
+        MediaPlayer mp = new MediaPlayer();
+        try {
+            AssetFileDescriptor afd = getAssets().openFd("audio/Try Again.mp3");
+            mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+            afd.close();
+            mp.prepare();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return mp;
+    }
+
+    /**
+     * Marks word as complete and saves it in Shared Preferences
+     * @param word word to mark as complete
+     */
+    private void markWordAsComplete(Word word) {
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("completedWords", MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+
+        editor.putBoolean(word.getSpelling(), true);
+        editor.apply();
+        setAudioFor(word).start();
     }
 
     private int randInt(int min, int max) {

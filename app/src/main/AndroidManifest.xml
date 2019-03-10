@@ -12,15 +12,17 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup">
-        <activity android:name=".phoneme_list.PhonemeListActivity" />
-        <activity android:name=".GameActivity" />
-        <activity android:name=".menu.LevelSelectMenu">
+        <activity android:name=".HomeScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".word_bank_list.WordBankListActivity" />
+        <activity android:name=".phoneme_list.PhonemeListActivity" />
+        <activity android:name=".GameActivity" />
+        <activity android:name=".menu.LevelSelectMenu" />
     </application>
 
 </manifest>
