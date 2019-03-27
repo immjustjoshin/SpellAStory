@@ -6,6 +6,7 @@ import android.content.res.AssetFileDescriptor;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayout;
 import android.text.Html;
@@ -37,12 +38,13 @@ public class GameActivity extends AppCompatActivity {
 
     public static final String EX_WORD = "word";
     private int letterIndex = 0;
-    private static final int phonemeCount = 9;
+    private static final int phonemeCount = 4;
     private Map<Integer, List<Integer>> gridLayouts = new HashMap<>();
     private List<Phoneme> phonemeOptionsList;
+    private List<Phoneme> correctPhonemeSequence = new ArrayList<>();
+    private int phonemeSpelledCount = 0;
     private ImageButton pictureImageButton;
     private TextView userSpelling;
-    private boolean wordSpelled = false;
     private String toSpell = "";
 
     private Random rand;
@@ -73,24 +75,27 @@ public class GameActivity extends AppCompatActivity {
 
         //There is probably a better way to do this. But for now, storing
         //layouts in this map
-        gridLayouts.put(9, new ArrayList<>(Arrays.asList(3, 3)));
-        gridLayouts.put(10, new ArrayList<>(Arrays.asList(4, 3)));
+        gridLayouts.put(3, new ArrayList<>(Arrays.asList(3, 1)));
+        gridLayouts.put(4, new ArrayList<>(Arrays.asList(2, 2)));
 
         rand = new Random(); //This random is not good! We should instantiate it
         // At the beginning of app instantiation.
 
-        phonemeOptionsList = generateGamePhonemeList(word);
+        for (Phoneme correctPhoneme : word.getPhonemes()) {
+            if (!correctPhoneme.getCode().equals("0")) {
+                correctPhonemeSequence.add(correctPhoneme);
+            }
+        }
+        phonemeOptionsList = generateGamePhonemeList();
         setPhonemeButtons(word);
     }
 
-    private List<Phoneme> generateGamePhonemeList(Word word) {
+    private List<Phoneme> generateGamePhonemeList() {
         Log.d("GENERATE", "Phoneme list being generated");
         List<Phoneme> phonemeList = new ArrayList<>();
-        for (Phoneme correctPhoneme : word.getPhonemes()) {
-            if (!correctPhoneme.getCode().equals("0")) {
-                phonemeList.add(correctPhoneme);
-            }
-        }
+        Phoneme correct = correctPhonemeSequence.get(phonemeSpelledCount);
+        phonemeList.add(correct);
+
         List<Phoneme> allPhonemesList = null;
         try {
             Database db = new Database(getAssets());
@@ -113,9 +118,9 @@ public class GameActivity extends AppCompatActivity {
                 if (phoneme.getSpelling().contains(phonemeToAdd.getSpelling())) {
                     duplicate = true;
                 }
-                if (phoneme.getCode().equals("0")) {
-                    silent = true;
-                }
+            }
+            if (phonemeToAdd.getCode().equals("0")) {
+                silent = true;
             }
             if (!duplicate && !silent) {
                 phonemeList.add(phonemeToAdd);
@@ -127,6 +132,7 @@ public class GameActivity extends AppCompatActivity {
 
     private void setPhonemeButtons(final Word word) {
         GridLayout grid = findViewById(R.id.gameGrid);
+        grid.removeAllViews();
         int columnCount = Objects.requireNonNull(gridLayouts.get(phonemeCount)).get(0);
         int rowCount = Objects.requireNonNull(gridLayouts.get(phonemeCount)).get(1);
         grid.setColumnCount(columnCount);
@@ -135,6 +141,7 @@ public class GameActivity extends AppCompatActivity {
             final Button phonemeButton = new Button(this);
             final Phoneme phoneme = phonemeOptionsList.get(i);
             phonemeButton.setText(phoneme.getSpelling());
+            phonemeButton.setBackgroundColor(ContextCompat.getColor(this, R.color.white));
             phonemeButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     //Checking if correct answer
@@ -158,12 +165,18 @@ public class GameActivity extends AppCompatActivity {
                             userSpelling.setText(Html.fromHtml(newSpelling), TextView.BufferType.SPANNABLE);
                             v.setVisibility(View.INVISIBLE);
 
+                            phonemeSpelledCount++;
+
                             // Plays positive audio if user chooses the correct answer
                             if (toSpell.length() != letterIndex) {
                                 playPositiveSound().start();
+                                //resetGrid();
+                                phonemeOptionsList = generateGamePhonemeList();
+                                setPhonemeButtons(word); //Wow it's recursive!
                             } else {
                                 // User has spelled the word completely!
                                 markWordAsComplete(word);
+                                resetGrid();
                             }
                         } else {
                             // Incorrect answer!
@@ -184,6 +197,13 @@ public class GameActivity extends AppCompatActivity {
 
             grid.addView(phonemeButton);
         }
+    }
+    /**
+     * Resets the phonemeButton grid
+     */
+    private void resetGrid() {
+        GridLayout grid = findViewById(R.id.gameGrid);
+        grid.removeAllViews();
     }
 
     /**
