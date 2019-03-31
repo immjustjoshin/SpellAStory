@@ -108,7 +108,8 @@ public class GameEndDialogFragment extends BottomSheetDialogFragment {
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
-            holder.text.setText(String.valueOf(position));
+
+            holder.text.setText(String.format("thing %d",position));
         }
 
         @Override
