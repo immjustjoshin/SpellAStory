@@ -21,7 +21,7 @@
         </activity>
         <activity android:name=".word_bank_list.WordBankListActivity" />
         <activity android:name=".phoneme_list.PhonemeListActivity" />
-        <activity android:name=".GameActivity" />
+        <activity android:name=".game.GameActivity" />
         <activity android:name=".menu.LevelSelectMenu" />
     </application>
 

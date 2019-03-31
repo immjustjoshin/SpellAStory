@@ -1,4 +1,4 @@
-package edu.gatech.spellastory;
+package edu.gatech.spellastory.game;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -6,6 +6,7 @@ import android.content.res.AssetFileDescriptor;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayout;
@@ -28,13 +29,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 
+import edu.gatech.spellastory.R;
 import edu.gatech.spellastory.data.Database;
 import edu.gatech.spellastory.domain.Phoneme;
 import edu.gatech.spellastory.domain.Word;
 
 import static org.apache.commons.collections.CollectionUtils.size;
 
-public class GameActivity extends AppCompatActivity {
+public class GameActivity extends AppCompatActivity implements GameEndDialogFragment.Listener {
 
     public static final String EX_WORD = "word";
     private int letterIndex = 0;
@@ -46,6 +48,7 @@ public class GameActivity extends AppCompatActivity {
     private ImageButton pictureImageButton;
     private TextView userSpelling;
     private String toSpell = "";
+    FragmentManager fm;
 
     private Random rand;
 
@@ -88,6 +91,11 @@ public class GameActivity extends AppCompatActivity {
         }
         phonemeOptionsList = generateGamePhonemeList();
         setPhonemeButtons(word);
+
+        fm = getSupportFragmentManager();
+
+
+
     }
 
     private List<Phoneme> generateGamePhonemeList() {
@@ -177,6 +185,7 @@ public class GameActivity extends AppCompatActivity {
                                 // User has spelled the word completely!
                                 markWordAsComplete(word);
                                 resetGrid();
+                                GameEndDialogFragment.newInstance(5).show(fm,"win");
                             }
                         } else {
                             // Incorrect answer!
@@ -340,5 +349,10 @@ public class GameActivity extends AppCompatActivity {
 
         //The leaps and bounds I go to generate something random...
         return rand.nextInt((max - min) + 1) + min;
+    }
+
+    @Override
+    public void onItemClicked(int position) {
+
     }
 }
