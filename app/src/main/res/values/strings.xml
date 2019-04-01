@@ -7,4 +7,6 @@
     <string name="spell_a_word">Spell A Word</string>
     <string name="spell_a_story">Spell A Story</string>
     <string name="word_bank">Word Bank</string>
+    <string name="story_script">Story Script</string>
+    <string name="word">Word</string>
 </resources>

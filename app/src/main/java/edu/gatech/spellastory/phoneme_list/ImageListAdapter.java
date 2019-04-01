@@ -48,7 +48,7 @@ public class ImageListAdapter extends
 
         viewHolder.word = word;
         try {
-            InputStream ims = assets.open("pictures/" + word.getSpelling() + ".png");
+            InputStream ims = assets.open("pictures/words/" + word.getSpelling() + ".png");
             Drawable d = Drawable.createFromStream(ims, null);
             viewHolder.pictureImageButton.setImageDrawable(d);
         } catch (IOException e) {

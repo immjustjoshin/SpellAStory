@@ -12,6 +12,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup">
+        <activity android:name=".story_mode.StoryPopUp"
+            android:theme="@style/AppTheme.StoryPopup">
+        </activity>
+        <activity android:name=".story_mode.StoryActivity" />
+        <activity android:name=".story_template_list.StoryListActivity" />
         <activity android:name=".HomeScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

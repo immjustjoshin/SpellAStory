@@ -90,7 +90,7 @@ public class Database {
             throw new IllegalArgumentException
                     ("Did not encode letters " + word + " for word " + originalWord);
         }
-        return new Word(originalWord, phonemeObjs);
+        return new Word(originalWord, phonemeObjs, false);
     }
 
     public List<Phoneme> getAllPhonemes() {
