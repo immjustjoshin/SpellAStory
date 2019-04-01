@@ -308,14 +308,7 @@ public class GameActivity extends AppCompatActivity implements GameEndDialogFrag
     private MediaPlayer playPositiveSound() {
         MediaPlayer mp = new MediaPlayer();
         try {
-            AssetManager temp = getAssets();
-            String[] files = temp.list("audio/positive_praise_words");
-
-            // Chooses random integer to call random praise word audio
-            Random r = new Random();
-            int i = r.nextInt(files.length) + 1;
-
-            AssetFileDescriptor afd = getAssets().openFd("audio/positive_praise_words/a(" + i + ").mp3");
+            AssetFileDescriptor afd = getAssets().openFd("audio/Ding Sound Effect.mp3");
             mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
             afd.close();
             mp.prepare();
@@ -356,8 +349,28 @@ public class GameActivity extends AppCompatActivity implements GameEndDialogFrag
 
         editor.putString(word.getSpelling(), json);
         editor.apply();
-        playPositiveSound().start();
-    }
+
+        // plays praise word audio when user spells word correctly
+        MediaPlayer mp = new MediaPlayer();
+        try {
+            AssetManager temp = getAssets();
+            String[] files = temp.list("audio/positive_praise_words");
+
+            // Chooses random integer to call random praise word audio
+            Random r = new Random();
+            int i = 1;
+            if (files != null) {
+                i = r.nextInt(files.length) + 1;
+            }
+            AssetFileDescriptor afd = getAssets().openFd("audio/positive_praise_words/a(" + i + ").mp3");
+            mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+            afd.close();
+            mp.prepare();
+            mp.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+            }
 
     private int randInt(int min, int max) {
 
