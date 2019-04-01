@@ -9,4 +9,5 @@
     <string name="word_bank">Word Bank</string>
     <string name="story_script">Story Script</string>
     <string name="word">Word</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

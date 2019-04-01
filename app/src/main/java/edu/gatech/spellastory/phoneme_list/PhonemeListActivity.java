@@ -9,7 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import java.io.IOException;
 import java.util.List;
 
-import edu.gatech.spellastory.GameActivity;
+import edu.gatech.spellastory.game.GameActivity;
 import edu.gatech.spellastory.R;
 import edu.gatech.spellastory.data.Database;
 import edu.gatech.spellastory.data.PhonemeWordsPair;
