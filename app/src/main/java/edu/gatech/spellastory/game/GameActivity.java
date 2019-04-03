@@ -1,11 +1,13 @@
-package edu.gatech.spellastory;
+package edu.gatech.spellastory.game;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.AssetFileDescriptor;
+import android.content.res.AssetManager;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayout;
@@ -16,6 +18,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,13 +32,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 
+import edu.gatech.spellastory.R;
 import edu.gatech.spellastory.data.Database;
 import edu.gatech.spellastory.domain.Phoneme;
 import edu.gatech.spellastory.domain.Word;
 
 import static org.apache.commons.collections.CollectionUtils.size;
 
-public class GameActivity extends AppCompatActivity {
+public class GameActivity extends AppCompatActivity implements GameEndDialogFragment.Listener {
 
     public static final String EX_WORD = "word";
     private int letterIndex = 0;
@@ -46,6 +51,7 @@ public class GameActivity extends AppCompatActivity {
     private ImageButton pictureImageButton;
     private TextView userSpelling;
     private String toSpell = "";
+    FragmentManager fm;
 
     private Random rand;
 
@@ -88,6 +94,11 @@ public class GameActivity extends AppCompatActivity {
         }
         phonemeOptionsList = generateGamePhonemeList();
         setPhonemeButtons(word);
+
+        fm = getSupportFragmentManager();
+
+
+
     }
 
     private List<Phoneme> generateGamePhonemeList() {
@@ -177,6 +188,7 @@ public class GameActivity extends AppCompatActivity {
                                 // User has spelled the word completely!
                                 markWordAsComplete(word);
                                 resetGrid();
+                                GameEndDialogFragment.newInstance(5).show(fm,"win");
                             }
                         } else {
                             // Incorrect answer!
@@ -215,7 +227,7 @@ public class GameActivity extends AppCompatActivity {
         pictureImageButton = findViewById(R.id.imageButton_picture);
 
         try {
-            InputStream ims = getAssets().open("pictures/" + word.getSpelling() + ".png");
+            InputStream ims = getAssets().open("pictures/words/" + word.getSpelling() + ".png");
             Drawable d = Drawable.createFromStream(ims, null);
             pictureImageButton.setImageDrawable(d);
         } catch (IOException e) {
@@ -296,7 +308,7 @@ public class GameActivity extends AppCompatActivity {
     private MediaPlayer playPositiveSound() {
         MediaPlayer mp = new MediaPlayer();
         try {
-            AssetFileDescriptor afd = getAssets().openFd("audio/Ding.mp3");
+            AssetFileDescriptor afd = getAssets().openFd("audio/Ding Sound Effect.mp3");
             mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
             afd.close();
             mp.prepare();
@@ -331,14 +343,43 @@ public class GameActivity extends AppCompatActivity {
         SharedPreferences pref = getApplicationContext().getSharedPreferences("completedWords", MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
 
-        editor.putBoolean(word.getSpelling(), true);
+        word.setComplete(true);
+        Gson gson = new Gson();
+        String json = gson.toJson(word);
+
+        editor.putString(word.getSpelling(), json);
         editor.apply();
-        setAudioFor(word).start();
-    }
+
+        // plays praise word audio when user spells word correctly
+        MediaPlayer mp = new MediaPlayer();
+        try {
+            AssetManager temp = getAssets();
+            String[] files = temp.list("audio/positive_praise_words");
+
+            // Chooses random integer to call random praise word audio
+            Random r = new Random();
+            int i = 1;
+            if (files != null) {
+                i = r.nextInt(files.length) + 1;
+            }
+            AssetFileDescriptor afd = getAssets().openFd("audio/positive_praise_words/a(" + i + ").mp3");
+            mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+            afd.close();
+            mp.prepare();
+            mp.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+            }
 
     private int randInt(int min, int max) {
 
         //The leaps and bounds I go to generate something random...
         return rand.nextInt((max - min) + 1) + min;
+    }
+
+    @Override
+    public void onItemClicked(int position) {
+
     }
 }

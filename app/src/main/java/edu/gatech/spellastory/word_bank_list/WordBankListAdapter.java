@@ -20,9 +20,9 @@ import edu.gatech.spellastory.domain.Word;
 public class WordBankListAdapter extends RecyclerView.Adapter<WordBankListAdapter.ViewHolder> {
 
     private Context context;
-    private List<String> completedWords;
+    private List<Word> completedWords;
 
-    WordBankListAdapter(Context context, List<String> completedWords) {
+    WordBankListAdapter(Context context, List<Word> completedWords) {
         this.context = context;
         this.completedWords = completedWords;
     }
@@ -40,8 +40,8 @@ public class WordBankListAdapter extends RecyclerView.Adapter<WordBankListAdapte
         ImageView image = viewHolder.imageWord;
         TextView name = viewHolder.pictureName;
 
-        image.setImageDrawable(setPictureFor(completedWords.get(i)));
-        name.setText(completedWords.get(i));
+        image.setImageDrawable(setPictureFor(completedWords.get(i).getSpelling()));
+        name.setText(completedWords.get(i).getSpelling());
 
     }
 
@@ -52,7 +52,7 @@ public class WordBankListAdapter extends RecyclerView.Adapter<WordBankListAdapte
 
     private Drawable setPictureFor(String word) {
         try {
-            InputStream ims = context.getAssets().open("pictures/" + word + ".png");
+            InputStream ims = context.getAssets().open("pictures/words/" + word + ".png");
             return Drawable.createFromStream(ims, null);
         } catch (IOException e) {
             // Could not find picture associated with the word

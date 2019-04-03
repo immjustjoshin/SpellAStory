@@ -6,11 +6,14 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import edu.gatech.spellastory.R;
+import edu.gatech.spellastory.domain.Word;
 
 public class WordBankListActivity extends AppCompatActivity {
 
@@ -29,16 +32,17 @@ public class WordBankListActivity extends AppCompatActivity {
         wordsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
-    private List<String> getCompletedWords() {
-        List<String> wordsCompleted = new ArrayList<>();
+    private List<Word> getCompletedWords() {
+        List<Word> wordsCompleted = new ArrayList<>();
         SharedPreferences pref = getApplicationContext().getSharedPreferences("completedWords", MODE_PRIVATE);
         Map<String, ?> map = pref.getAll();
-
-        List<String> wordsSaved = new ArrayList<>(map.keySet());
-
-        for (int i = 0; i < wordsSaved.size(); i++) {
-            if (pref.getBoolean(wordsSaved.get(i), false)) {
-                wordsCompleted.add(wordsSaved.get(i));
+        List<String> keys = new ArrayList<>(map.keySet());
+        Gson gson = new Gson();
+        for (int i = 0; i < keys.size(); i++) {
+            String json = pref.getString(keys.get(i), "");
+            Word word = gson.fromJson(json, Word.class);
+            if (word.isComplete()) {
+                wordsCompleted.add(word);
             }
         }
         return wordsCompleted;

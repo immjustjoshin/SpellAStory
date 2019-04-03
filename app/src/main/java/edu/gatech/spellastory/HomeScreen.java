@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 
 import edu.gatech.spellastory.menu.LevelSelectMenu;
+import edu.gatech.spellastory.story_template_list.StoryListActivity;
 import edu.gatech.spellastory.word_bank_list.WordBankListActivity;
 
 public class HomeScreen extends AppCompatActivity {
@@ -34,6 +35,14 @@ public class HomeScreen extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(v.getContext(), WordBankListActivity.class));
+            }
+        });
+
+        // Spell A Story Mode
+        spellAStory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(v.getContext(), StoryListActivity.class));
             }
         });
 

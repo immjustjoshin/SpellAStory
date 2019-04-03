@@ -7,10 +7,12 @@ public class Word implements Serializable {
 
     private String spelling;
     private List<Phoneme> phonemes;
+    private boolean complete;
 
-    public Word(String spelling, List<Phoneme> phonemes) {
+    public Word(String spelling, List<Phoneme> phonemes, boolean complete) {
         this.spelling = spelling;
         this.phonemes = phonemes;
+        this.complete = complete;
     }
 
     public String getSpelling() {
@@ -19,6 +21,14 @@ public class Word implements Serializable {
 
     public List<Phoneme> getPhonemes() {
         return phonemes;
+    }
+
+    public boolean isComplete() {
+        return complete;
+    }
+
+    public void setComplete(boolean complete) {
+        this.complete = complete;
     }
 
     @Override
