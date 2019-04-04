@@ -19,7 +19,11 @@ class Words {
     // Ex. swan -> [95,3,61]
     private Map<String, List<String>> words;
 
+    // Map each category to a corresponding list of words
+    private Map<String, List<String>> categoryMap;
+
     Words(Reader csvReader) {
+        categoryMap = new HashMap<>();
         words = readWords(csvReader);
     }
 
@@ -30,6 +34,14 @@ class Words {
             String[] nextLine;
             while ((nextLine = reader.readNext()) != null) {
                 String word = nextLine[0];
+                String category = nextLine[1];
+
+                // Add each word to a list that a category maps to
+                List<String> temp = categoryMap.get(category);
+                if (temp == null) temp = new ArrayList<>();
+                temp.add(word);
+                categoryMap.put(category, temp);
+
                 String[] coded_phonemes = Arrays.copyOfRange(nextLine, 2, nextLine.length);
                 phonemes.put(word, Arrays.asList(coded_phonemes));
             }
@@ -48,6 +60,10 @@ class Words {
 
     List<String> getAllWords() {
         return new ArrayList<>(words.keySet());
+    }
+
+    List<String> getWordsForCategory(String category) {
+        return categoryMap.get(category);
     }
 
     boolean wordContains(String word, String phonemeCode) {
