@@ -1,9 +1,12 @@
 package edu.gatech.spellastory.data;
 
+import android.content.res.AssetManager;
+
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,15 +20,25 @@ public class Stories {
 
     private Map<String, Story> storyMap;
 
-    private Map<String, Story> readStories(FileReader fileReader) throws IOException {
-        Map<String, Story> storyMap = new HashMap<>();
-        BufferedReader br = new BufferedReader(fileReader);
+    public Stories(AssetManager assets, String... stories) throws IOException {
+        storyMap = readStories(Arrays.asList(stories), assets);
+    }
 
-        Story story = new Story();
-        String line;
-        while ((line = br.readLine()) != null) {
-            List<StoryToken> storyTokens = parseLine(line);
-            story.add(storyTokens);
+    private Map<String, Story> readStories(List<String> stories, AssetManager assets) throws IOException {
+        Map<String, Story> storyMap = new HashMap<>();
+
+        for (String storyName : stories) {
+            InputStreamReader reader = new InputStreamReader(assets.open("stories/" + storyName + ".txt"));
+            BufferedReader br = new BufferedReader(reader);
+
+            Story story = new Story();
+            String line;
+            while ((line = br.readLine()) != null) {
+                List<StoryToken> storyTokens = parseLine(line);
+                story.add(storyTokens);
+            }
+
+            storyMap.put(storyName, story);
         }
 
         return storyMap;
@@ -63,6 +76,6 @@ public class Stories {
     }
 
     public Story getStory(String story) {
-        return null;
+        return storyMap.get(story);
     }
 }

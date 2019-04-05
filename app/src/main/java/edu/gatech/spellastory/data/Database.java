@@ -9,6 +9,7 @@ import java.util.List;
 
 import edu.gatech.spellastory.domain.Phoneme;
 import edu.gatech.spellastory.domain.Word;
+import edu.gatech.spellastory.domain.stories.Story;
 
 public class Database {
 
@@ -16,6 +17,7 @@ public class Database {
 
     private Phonemes phonemesDb;
     private Words wordsDb;
+    private Stories storiesDb;
 
     public Database(AssetManager assets) throws IOException {
         InputStreamReader phonemesReader = new InputStreamReader
@@ -25,6 +27,8 @@ public class Database {
         InputStreamReader wordsReader = new InputStreamReader
                 (assets.open("coded_words.csv"));
         this.wordsDb = new Words(wordsReader);
+
+        this.storiesDb = new Stories(assets, "special_invention");
     }
 
     public Database(Phonemes phonemesDb, Words wordsDb) {
@@ -95,5 +99,9 @@ public class Database {
 
     public List<Phoneme> getAllPhonemes() {
         return phonemesDb.getAllPhonemes();
+    }
+
+    public Story getStory(String name) {
+        return storiesDb.getStory(name);
     }
 }
