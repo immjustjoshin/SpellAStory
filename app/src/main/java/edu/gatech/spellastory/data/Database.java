@@ -16,24 +16,24 @@ public class Database {
     private static final String TAG = Database.class.getSimpleName();
 
     private Phonemes phonemesDb;
+    private Categories categoriesDb;
     private Words wordsDb;
     private Stories storiesDb;
 
     public Database(AssetManager assets) throws IOException {
         InputStreamReader phonemesReader = new InputStreamReader
                 (assets.open("coded_phonemes.csv"));
-        this.phonemesDb = new Phonemes(phonemesReader);
+        phonemesDb = new Phonemes(phonemesReader);
 
         InputStreamReader wordsReader = new InputStreamReader
                 (assets.open("coded_words.csv"));
-        this.wordsDb = new Words(wordsReader);
+        wordsDb = new Words(wordsReader);
 
-        this.storiesDb = new Stories(assets, "special_invention");
-    }
+        InputStreamReader categoriesReader = new InputStreamReader
+                (assets.open("coded_categories.csv"));
+        categoriesDb = new Categories(categoriesReader);
 
-    public Database(Phonemes phonemesDb, Words wordsDb) {
-        this.phonemesDb = phonemesDb;
-        this.wordsDb = wordsDb;
+        storiesDb = new Stories(categoriesDb, assets, "special_invention");
     }
 
     public List<PhonemeWordsPair> getWordsForLevel(int level) {

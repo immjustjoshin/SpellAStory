@@ -1,12 +1,13 @@
 package edu.gatech.spellastory.domain.stories;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 public class Story {
 
     private List<StoryToken> tokens;
+    private List<StoryBlank> blanks;
 
     public Story() {
         this.tokens = new ArrayList<>();
@@ -16,12 +17,26 @@ public class Story {
         this.tokens = tokens;
     }
 
-    public Story add(StoryToken... tokens) {
-        return add(Arrays.asList(tokens));
+    public void add(StoryToken token) {
+        if (token.isBlank()) {
+            addBlank((StoryBlank) token);
+        } else {
+            addLine((StoryLine) token);
+        }
     }
 
-    public Story add(List<StoryToken> tokens) {
-        this.tokens.addAll(tokens);
-        return this;
+    private void addLine(StoryLine line) {
+        tokens.add(line);
+    }
+
+    private void addBlank(StoryBlank blank) {
+        tokens.add(blank);
+        blanks.add(blank);
+    }
+
+    public void addAll(Collection<StoryToken> tokens) {
+        for (StoryToken token : tokens) {
+            add(token);
+        }
     }
 }

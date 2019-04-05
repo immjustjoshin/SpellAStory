@@ -2,6 +2,8 @@ package edu.gatech.spellastory.data;
 
 import android.content.res.AssetManager;
 
+import org.apache.commons.lang3.NotImplementedException;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -11,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import edu.gatech.spellastory.domain.Category;
 import edu.gatech.spellastory.domain.stories.Story;
 import edu.gatech.spellastory.domain.stories.StoryBlank;
 import edu.gatech.spellastory.domain.stories.StoryLine;
@@ -19,8 +22,10 @@ import edu.gatech.spellastory.domain.stories.StoryToken;
 public class Stories {
 
     private Map<String, Story> storyMap;
+    private Categories categoriesDb;
 
-    public Stories(AssetManager assets, String... stories) throws IOException {
+    public Stories(Categories categoriesDb, AssetManager assets, String... stories) throws IOException {
+        this.categoriesDb = categoriesDb;
         storyMap = readStories(Arrays.asList(stories), assets);
     }
 
@@ -35,7 +40,7 @@ public class Stories {
             String line;
             while ((line = br.readLine()) != null) {
                 List<StoryToken> storyTokens = parseLine(line);
-                story.add(storyTokens);
+                story.addAll(storyTokens);
             }
 
             storyMap.put(storyName, story);
@@ -46,6 +51,7 @@ public class Stories {
 
     private List<StoryToken> parseLine(String line) {
         List<StoryToken> storyTokens = new ArrayList<>();
+        Map<String, List<Category>> blankCategories = new HashMap<>();
         String[] stringTokens = line.split(" ");
 
         int i = 0;
@@ -64,7 +70,22 @@ public class Stories {
 
                 storyTokens.add(new StoryLine(token, text));
             } else if (StoryBlank.isBlank(token)) {
-                // TODO
+                String[] blankTokens = token.split("-");
+                String identifier = blankTokens[0];
+
+                List<Category> categories;
+                if (blankTokens.length > 1) {
+                    String[] categoryStrings = blankTokens[1].split(",");
+                    categories = categoriesDb.getCategories(categoryStrings);
+                    blankCategories.put(identifier, categories);
+                } else {
+                    categories = blankCategories.get(identifier);
+                }
+
+                storyTokens.add(new StoryBlank(identifier, categories));
+                i++;
+            } else {
+                throw new NotImplementedException("What kind of token is this? " + token);
             }
         }
 

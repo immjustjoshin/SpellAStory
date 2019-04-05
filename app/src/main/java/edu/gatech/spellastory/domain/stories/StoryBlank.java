@@ -2,12 +2,14 @@ package edu.gatech.spellastory.domain.stories;
 
 import java.util.List;
 
+import edu.gatech.spellastory.domain.Category;
+
 public class StoryBlank implements StoryToken {
 
     private String identifier;
-    private List<Integer> categories;
+    private List<Category> categories;
 
-    public StoryBlank(String identifier, List<Integer> categories) {
+    public StoryBlank(String identifier, List<Category> categories) {
         this.identifier = identifier;
         this.categories = categories;
     }
@@ -16,7 +18,7 @@ public class StoryBlank implements StoryToken {
         return identifier;
     }
 
-    public List<Integer> getCategories() {
+    public List<Category> getCategories() {
         return categories;
     }
 
@@ -24,4 +26,8 @@ public class StoryBlank implements StoryToken {
         return string.startsWith("[") && string.endsWith("]");
     }
 
+    @Override
+    public boolean isBlank() {
+        return true;
+    }
 }

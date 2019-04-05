@@ -22,4 +22,8 @@ public class StoryLine implements StoryToken {
         return string.startsWith("{") && string.endsWith("}");
     }
 
+    @Override
+    public boolean isBlank() {
+        return false;
+    }
 }
