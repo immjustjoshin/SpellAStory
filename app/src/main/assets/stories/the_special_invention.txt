@@ -1,4 +1,4 @@
-{SPS_2_1} "Get dressed an come to breakfast right now!" Mom called sweetly.
+{SPS_2_1} "Get dressed and come to breakfast right now!" Mom called sweetly.
 "I will," [A-2] {SPS_2_2} said.
 "You said that twice already! You'll make me late for work."
 "Okay!" [A] {SPS_2_3} said.

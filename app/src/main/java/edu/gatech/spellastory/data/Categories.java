@@ -27,7 +27,7 @@ public class Categories {
         while ((nextLine = r.readNext()) != null) {
             int num = Integer.parseInt(nextLine[0]);
             String name = nextLine[1];
-            categoryMap.put(num, name);
+            categories.put(num, name);
         }
         return categories;
     }

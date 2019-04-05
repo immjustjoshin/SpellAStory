@@ -22,10 +22,15 @@ public class StoryListAdapter extends RecyclerView.Adapter<StoryListAdapter.View
 
     private Context context;
     private List<String> stories;
+    private StoryClickListener storyClickListener;
 
     StoryListAdapter(Context context, List<String> stories) {
         this.context = context;
         this.stories = stories;
+    }
+
+    public void setStoryClickListener(StoryClickListener storyClickListener) {
+        this.storyClickListener = storyClickListener;
     }
 
     @NonNull
@@ -48,7 +53,7 @@ public class StoryListAdapter extends RecyclerView.Adapter<StoryListAdapter.View
         image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startStoryModeActivityForStory(storyTitle);
+                storyClickListener.onStoryClick(storyTitle);
             }
         });
     }
@@ -80,9 +85,7 @@ public class StoryListAdapter extends RecyclerView.Adapter<StoryListAdapter.View
         }
     }
 
-    private void startStoryModeActivityForStory(String story) {
-        Intent intent = new Intent(context, StoryActivity.class);
-        intent.putExtra(StoryActivity.EX_WORD, story);
-        context.startActivity(intent);
+    interface StoryClickListener {
+        void onStoryClick(String story);
     }
 }

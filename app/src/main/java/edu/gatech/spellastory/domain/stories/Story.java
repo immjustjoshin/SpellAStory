@@ -39,4 +39,8 @@ public class Story {
             add(token);
         }
     }
+
+    public List<StoryToken> getTokens() {
+        return tokens;
+    }
 }

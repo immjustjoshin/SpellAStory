@@ -2,7 +2,9 @@ package edu.gatech.spellastory.story_mode;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.AssetFileDescriptor;
 import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
@@ -13,8 +15,15 @@ import android.widget.TextView;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import edu.gatech.spellastory.R;
+import edu.gatech.spellastory.data.Database;
+import edu.gatech.spellastory.domain.Phoneme;
+import edu.gatech.spellastory.domain.stories.Story;
+import edu.gatech.spellastory.domain.stories.StoryBlank;
+import edu.gatech.spellastory.domain.stories.StoryLine;
+import edu.gatech.spellastory.domain.stories.StoryToken;
 
 public class StoryActivity extends AppCompatActivity {
 
@@ -23,6 +32,7 @@ public class StoryActivity extends AppCompatActivity {
     private ImageView storyTemplate, speechBubble;
     private TextView placeHolder;
     private Button popup;
+    private List<StoryToken> tokens;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +45,8 @@ public class StoryActivity extends AppCompatActivity {
         speechBubble = findViewById(R.id.iv_speech_bubble);
         placeHolder = findViewById(R.id.tv_placeholder);
         setStoryTemplateFor(storyTitle);
+
+        beginStory();
 
         popup = findViewById(R.id.popup);
         popup.setOnClickListener(new View.OnClickListener() {
@@ -81,5 +93,42 @@ public class StoryActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private void beginStory() {
+
+        try {
+            Database db = new Database(getAssets());
+            Story story = db.getStory(convertStoryTitle(getStoryTitle()));
+            tokens = story.getTokens();
+
+            // Gets first token which should be a story line to start the story
+            StoryToken beginning = tokens.get(0);
+            if (!beginning.isBlank()) {
+                StoryLine start = (StoryLine) beginning;
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private MediaPlayer setAudioFor(String storyAudio) {
+        MediaPlayer mp = new MediaPlayer();
+        try {
+            AssetFileDescriptor afd = getAssets().openFd("audio/stories/" + convertStoryTitle(getStoryTitle()) + "/" + storyAudio + ".mp3");
+            mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+            afd.close();
+            mp.prepare();
+        } catch (IOException e) {
+            // Could not find audio file associate with the word
+            e.printStackTrace();
+        }
+        return mp;
+    }
+
+
+    private String convertStoryTitle(String title) {
+        return title.replaceAll(" ", "_").toLowerCase();
     }
 }

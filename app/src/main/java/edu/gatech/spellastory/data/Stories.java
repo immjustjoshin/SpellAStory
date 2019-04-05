@@ -30,7 +30,7 @@ public class Stories {
     }
 
     private Map<String, Story> readStories(List<String> stories, AssetManager assets) throws IOException {
-        Map<String, Story> storyMap = new HashMap<>();
+        Map<String, Story> map = new HashMap<>();
 
         for (String storyName : stories) {
             InputStreamReader reader = new InputStreamReader(assets.open("stories/" + storyName + ".txt"));
@@ -43,10 +43,10 @@ public class Stories {
                 story.addAll(storyTokens);
             }
 
-            storyMap.put(storyName, story);
+            map.put(storyName, story);
         }
 
-        return storyMap;
+        return map;
     }
 
     private List<StoryToken> parseLine(String line) {
@@ -85,7 +85,7 @@ public class Stories {
                 storyTokens.add(new StoryBlank(identifier, categories));
                 i++;
             } else {
-                throw new NotImplementedException("What kind of token is this? " + token);
+//                throw new NotImplementedException("What kind of token is this? " + token);
             }
         }
 
