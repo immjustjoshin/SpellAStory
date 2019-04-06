@@ -33,7 +33,7 @@ public class Database {
                 (assets.open("coded_categories.csv"));
         categoriesDb = new Categories(categoriesReader);
 
-        storiesDb = new Stories(categoriesDb, assets, "the_special_invention");
+        //storiesDb = new Stories(categoriesDb, assets, "the_special_invention");
     }
 
     public List<PhonemeWordsPair> getWordsForLevel(int level) {

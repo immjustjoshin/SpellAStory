@@ -188,7 +188,7 @@ public class GameActivity extends AppCompatActivity implements GameEndDialogFrag
                                 // User has spelled the word completely!
                                 markWordAsComplete(word);
                                 resetGrid();
-                                GameEndDialogFragment.newInstance(5).show(fm,"win");
+                                GameEndDialogFragment.newInstance(1).show(fm,"win");
                             }
                         } else {
                             // Incorrect answer!
@@ -380,6 +380,10 @@ public class GameActivity extends AppCompatActivity implements GameEndDialogFrag
 
     @Override
     public void onItemClicked(int position) {
-
+        // TODO: make an enum
+        //First button on bottom sheet is always go back.
+        if (position == 0){
+            finish();
+        }
     }
 }

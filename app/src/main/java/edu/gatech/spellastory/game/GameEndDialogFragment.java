@@ -1,6 +1,7 @@
 package edu.gatech.spellastory.game;
 
 import android.content.Context;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialogFragment;
@@ -10,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import edu.gatech.spellastory.R;
@@ -24,7 +26,6 @@ import edu.gatech.spellastory.R;
  */
 public class GameEndDialogFragment extends BottomSheetDialogFragment {
 
-    // TODO: Customize parameter argument names
     private static final String ARG_ITEM_COUNT = "item_count";
     private Listener mListener;
 
@@ -46,7 +47,7 @@ public class GameEndDialogFragment extends BottomSheetDialogFragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        final RecyclerView recyclerView = (RecyclerView) view;
+        final RecyclerView recyclerView = view.findViewById(R.id.list);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(new ItemAdapter(getArguments().getInt(ARG_ITEM_COUNT)));
     }
@@ -109,7 +110,12 @@ public class GameEndDialogFragment extends BottomSheetDialogFragment {
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
 
-            holder.text.setText(String.format("thing %d",position));
+            if (position == 0){
+                holder.text.setText("Go back");
+            } else {
+                holder.text.setText(String.format("thing %d",position));
+            }
+
         }
 
         @Override
