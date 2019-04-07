@@ -106,7 +106,6 @@ public class StoryActivity extends AppCompatActivity {
             StoryToken beginning = tokens.get(0);
             if (!beginning.isBlank()) {
                 StoryLine start = (StoryLine) beginning;
-
             }
         } catch (IOException e) {
             e.printStackTrace();

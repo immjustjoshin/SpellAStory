@@ -6,11 +6,10 @@ import java.util.List;
 
 public class Story {
 
-    private List<StoryToken> tokens;
-    private List<StoryBlank> blanks;
+    private List<StoryToken> tokens = new ArrayList<>();
+    private List<StoryBlank> blanks = new ArrayList<>();
 
     public Story() {
-        this.tokens = new ArrayList<>();
     }
 
     private Story(List<StoryToken> tokens) {

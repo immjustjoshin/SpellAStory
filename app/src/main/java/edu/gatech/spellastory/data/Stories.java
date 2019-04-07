@@ -1,6 +1,7 @@
 package edu.gatech.spellastory.data;
 
 import android.content.res.AssetManager;
+import android.text.TextUtils;
 
 import org.apache.commons.lang3.NotImplementedException;
 
@@ -36,12 +37,16 @@ public class Stories {
             InputStreamReader reader = new InputStreamReader(assets.open("stories/" + storyName + ".txt"));
             BufferedReader br = new BufferedReader(reader);
 
-            Story story = new Story();
+            List<String> lines = new ArrayList<>();
             String line;
             while ((line = br.readLine()) != null) {
-                List<StoryToken> storyTokens = parseLine(line);
-                story.addAll(storyTokens);
+                lines.add(line);
             }
+            String storyText = TextUtils.join("\n", lines);
+
+            Story story = new Story();
+            List<StoryToken> storyTokens = parseLine(storyText);
+            story.addAll(storyTokens);
 
             map.put(storyName, story);
         }
@@ -62,14 +67,17 @@ public class Stories {
             if (StoryLine.isAudio(token)) {
                 i++;
 
-                StringBuilder builder = new StringBuilder();
-                while (i < stringTokens.length && isText(stringTokens[i])) {
-                    builder.append(stringTokens[i++]);
-                }
-                String text = builder.toString();
+                String audioFile = token.substring(1, token.length() - 1);
 
-                storyTokens.add(new StoryLine(token, text));
+                List<String> lineText = new ArrayList<>();
+                while (i < stringTokens.length && isText(stringTokens[i])) {
+                    lineText.add(stringTokens[i++]);
+                }
+                String text = TextUtils.join(" ", lineText);
+
+                storyTokens.add(new StoryLine(audioFile, text));
             } else if (StoryBlank.isBlank(token)) {
+                token = token.substring(1, token.length() - 1);
                 String[] blankTokens = token.split("-");
                 String identifier = blankTokens[0];
 
@@ -85,7 +93,7 @@ public class Stories {
                 storyTokens.add(new StoryBlank(identifier, categories));
                 i++;
             } else {
-//                throw new NotImplementedException("What kind of token is this? " + token);
+                throw new NotImplementedException("What kind of token is this? " + token);
             }
         }
 

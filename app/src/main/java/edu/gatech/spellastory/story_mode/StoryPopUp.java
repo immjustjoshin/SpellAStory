@@ -2,15 +2,15 @@ package edu.gatech.spellastory.story_mode;
 
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
-
 
 import com.google.gson.Gson;
 
@@ -65,7 +65,7 @@ public class StoryPopUp extends AppCompatActivity {
         int width = dm.widthPixels;
         int height = dm.heightPixels;
 
-        getWindow().setLayout((int)(width*.7), (int)(height * .7));
+        getWindow().setLayout((int) (width * .7), (int) (height * .7));
 
         WindowManager.LayoutParams params = getWindow().getAttributes();
         params.gravity = Gravity.CENTER;
@@ -104,12 +104,16 @@ public class StoryPopUp extends AppCompatActivity {
 
     private void setImages() {
         List<String> completedWords = getCompletedWords();
-        pic1.setImageDrawable(setPictureFor(completedWords.get(0)));
-        title1.setText(completedWords.get(0));
-        pic2.setImageDrawable(setPictureFor(completedWords.get(1)));
-        title2.setText(completedWords.get(1));
-        pic3.setImageDrawable(setPictureFor(completedWords.get(2)));
-        title3.setText(completedWords.get(2));
+        ImageView[] pics = {pic1, pic2, pic3};
+        TextView[] titles = {title1, title2, title3};
+
+        for (int i = 0; i < completedWords.size(); i++) {
+            String completedWord = completedWords.get(i);
+            ImageView pic = pics[i];
+            TextView title = titles[i];
+            pic.setImageDrawable(setPictureFor(completedWord));
+            title.setText(completedWord);
+        }
     }
 
     private void setImageButtonActions() {
@@ -140,6 +144,7 @@ public class StoryPopUp extends AppCompatActivity {
 
     /**
      * Sets picture for word completed
+     *
      * @param word word that is completed
      * @return drawable of word
      */
