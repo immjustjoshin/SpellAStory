@@ -48,9 +48,10 @@ public class StoryActivity extends AppCompatActivity {
     public static final int WORD_CODE = 1;
     public static final String EX_NAME = "name";
     public static final int NAME_CODE = 2;
+    public static final int NONE_CODE = 0;
     private static final String FRIENDS = "friends";
     private static final String SPEECH_BUBBLE_IMG = "speech_bubble";
-    private static final String BLANK = "______";
+    private static final String BLANK = " ______ ";
     private ImageView storyTemplate, speechBubble;
     private TextView placeHolder;
     private List<StoryToken> tokens;
@@ -78,53 +79,10 @@ public class StoryActivity extends AppCompatActivity {
             Database db = new Database(getAssets());
             Story story = db.getStory(convertStoryTitle(getStoryTitle()));
             tokens = story.getTokens();
-
-            // Gets first token which should be a story line to start the story
-            StoryToken beginning = tokens.get(counter);
-            if (!beginning.isBlank()) {
-                StoryLine start = (StoryLine) beginning;
-                setAudioFor(start.getAudioFile()).start();
-                placeHolder.setText(makeTextClickable(start.getText() + BLANK), TextView.BufferType.SPANNABLE);
-                placeHolder.setMovementMethod(LinkMovementMethod.getInstance());
-                counter++;
-            }
+            checkNextToken();
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private SpannableStringBuilder makeTextClickable(String text) {
-        SpannableStringBuilder ssb = new SpannableStringBuilder(text);
-
-        ClickableSpan cs = new ClickableSpan() {
-            @Override
-            public void onClick(View widget) {
-                if (tokens.get(counter).isBlank()) {
-                    StoryBlank blank = (StoryBlank) tokens.get(counter);
-                    Intent intent = new Intent(getApplicationContext(), StoryPopUp.class);
-                    intent.putStringArrayListExtra(StoryPopUp.CATEGORIES, categoriesToString(blank.getCategories()));
-                    counter++;
-                    if (blank.getCategories().contains(FRIENDS)) {
-                        startActivityForResult(intent, NAME_CODE);
-                    } else {
-                        startActivityForResult(intent, WORD_CODE);
-                    }
-                }
-
-            }
-
-            // Override this method to change the color of the underline
-//            @Override
-//            public void updateDrawState(final TextPaint textPaint) {
-//                textPaint.setColor(getResources().getColor(R.color.));
-//                textPaint.setUnderlineText(true);
-//            }
-        };
-        start = text.length() - BLANK.length();
-        end = text.length();
-
-        ssb.setSpan(cs, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        return ssb;
     }
 
     @Override
@@ -144,25 +102,33 @@ public class StoryActivity extends AppCompatActivity {
             end = newText.length();
 
             // Clicks on same blank again to choose another word
-            ClickableSpan cs = new ClickableSpan() {
-                @Override
-                public void onClick(View widget) {
-                    if (tokens.get(counter-1).isBlank()) {
-                        StoryBlank blank = (StoryBlank) tokens.get(counter-1);
-                        Intent intent = new Intent(getApplicationContext(), StoryPopUp.class);
-                        intent.putExtra(StoryPopUp.CATEGORIES, categoriesToString(blank.getCategories()));
-                        if (blank.getCategories().contains(FRIENDS)) {
-                            startActivityForResult(intent, NAME_CODE);
-                        } else {
-                            startActivityForResult(intent, WORD_CODE);
-                        }
-                    }
-                }
-            };
-
-            newText.setSpan(cs, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+//            ClickableSpan cs = new ClickableSpan() {
+//                @Override
+//                public void onClick(View widget) {
+//                    if (tokens.get(counter-1).isBlank()) {
+//                        StoryBlank blank = (StoryBlank) tokens.get(counter-1);
+//                        Intent intent = new Intent(getApplicationContext(), StoryPopUp.class);
+//                        intent.putExtra(StoryPopUp.CATEGORIES, categoriesToString(blank.getCategories()));
+//                        if (blank.getCategories().contains(FRIENDS)) {
+//                            startActivityForResult(intent, NAME_CODE);
+//                        } else {
+//                            startActivityForResult(intent, WORD_CODE);
+//                        }
+//                    }
+//                }
+//            };
+//
+//            newText.setSpan(cs, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             placeHolder.setText(newText, TextView.BufferType.SPANNABLE);
             placeHolder.setMovementMethod(LinkMovementMethod.getInstance());
+
+            Handler h = new Handler();
+            h.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    checkNextToken();
+                }
+            }, 1000);
 //            for (ClickableSpan span : spanArray) {
 //                text.getSpanStart(span);
 //                text.getSpanEnd(span);
@@ -182,33 +148,63 @@ public class StoryActivity extends AppCompatActivity {
             end = newText.length();
 
             // Clicks on same blank again to choose another word
-            ClickableSpan cs = new ClickableSpan() {
-                @Override
-                public void onClick(View widget) {
-                    if (tokens.get(counter-1).isBlank()) {
-                        StoryBlank blank = (StoryBlank) tokens.get(counter-1);
-                        Intent intent = new Intent(getApplicationContext(), StoryPopUp.class);
-                        intent.putExtra(StoryPopUp.CATEGORIES, categoriesToString(blank.getCategories()));
-                        if (blank.getCategories().contains(FRIENDS)) {
-                            startActivityForResult(intent, NAME_CODE);
-                        } else {
-                            startActivityForResult(intent, WORD_CODE);
-                        }                    }
-                }
-            };
-
-            newText.setSpan(cs, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+//            ClickableSpan cs = new ClickableSpan() {
+//                @Override
+//                public void onClick(View widget) {
+//                    if (tokens.get(counter-1).isBlank()) {
+//                        StoryBlank blank = (StoryBlank) tokens.get(counter-1);
+//                        Intent intent = new Intent(getApplicationContext(), StoryPopUp.class);
+//                        intent.putExtra(StoryPopUp.CATEGORIES, categoriesToString(blank.getCategories()));
+//                        if (blank.getCategories().contains(FRIENDS)) {
+//                            startActivityForResult(intent, NAME_CODE);
+//                        } else {
+//                            startActivityForResult(intent, WORD_CODE);
+//                        }                    }
+//                }
+//            };
+//
+//            newText.setSpan(cs, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             placeHolder.setText(newText, TextView.BufferType.SPANNABLE);
             placeHolder.setMovementMethod(LinkMovementMethod.getInstance());
-        }
 
-        Handler h = new Handler();
-        h.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                checkNextToken();
-            }
-        }, 1000);
+            Handler h = new Handler();
+            h.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    checkNextToken();
+                }
+            }, 1000);
+        } else if (resultCode == NONE_CODE) {
+            // Does nothing when no word was selected
+            counter--;
+            checkNextToken();
+//            SpannableString text = (SpannableString) placeHolder.getText();
+//            ClickableSpan[] spans = text.getSpans(start, end, ClickableSpan.class);
+//            List<ClickableSpan> spanArray = asList(spans);
+//
+//            SpannableStringBuilder newText = new SpannableStringBuilder();
+//            newText.append(text);
+//
+//            ClickableSpan cs = new ClickableSpan() {
+//                @Override
+//                public void onClick(View widget) {
+//                    if (tokens.get(counter).isBlank()) {
+//                        StoryBlank blank = (StoryBlank) tokens.get(counter);
+//                        Intent intent = new Intent(getApplicationContext(), StoryPopUp.class);
+//                        intent.putExtra(StoryPopUp.CATEGORIES, categoriesToString(blank.getCategories()));
+//                        if (blank.getCategories().contains(FRIENDS)) {
+//                            startActivityForResult(intent, NAME_CODE);
+//                        } else {
+//                            startActivityForResult(intent, WORD_CODE);
+//                        }
+//                    }
+//                }
+//            };
+//
+//            newText.setSpan(cs, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+//            placeHolder.setText(newText, TextView.BufferType.SPANNABLE);
+//            placeHolder.setMovementMethod(LinkMovementMethod.getInstance());
+        }
     }
 
     private void checkNextToken() {
@@ -216,18 +212,30 @@ public class StoryActivity extends AppCompatActivity {
             StoryToken token = tokens.get(counter);
             if (!token.isBlank()) {
                 StoryLine line = (StoryLine) token;
+                SpannableString text;
+                SpannableStringBuilder newText;
+                if (counter == 0) { // Code for beginning the story
+                    String temp = line.getText();
 
-                SpannableString text = (SpannableString) placeHolder.getText();
-                ClickableSpan[] spans = text.getSpans(start, end, ClickableSpan.class);
-                List<ClickableSpan> spanArray = asList(spans);
+                    newText = new SpannableStringBuilder();
+                    newText.append(temp);
+                    newText.append(BLANK);
 
-                SpannableStringBuilder newText = new SpannableStringBuilder();
-                newText.append(text);
-                newText.append(line.getText());
-                newText.append(BLANK);
+                    start = newText.length() - BLANK.length();
+                    end = newText.length();
+                } else {
+                    text = (SpannableString) placeHolder.getText();
+                    ClickableSpan[] spans = text.getSpans(start, end, ClickableSpan.class);
+                    List<ClickableSpan> spanArray = asList(spans);
 
-                start = newText.length() - BLANK.length();
-                end = newText.length();
+                    newText = new SpannableStringBuilder();
+                    newText.append(text);
+                    newText.append(line.getText());
+                    newText.append(BLANK);
+
+                    start = newText.length() - BLANK.length();
+                    end = newText.length();
+                }
                 counter++;
 
                 ClickableSpan cs = new ClickableSpan() {
@@ -246,7 +254,6 @@ public class StoryActivity extends AppCompatActivity {
                         }
 
                     }
-
                     // Override this method to change the color of the underline
 //            @Override
 //            public void updateDrawState(final TextPaint textPaint) {

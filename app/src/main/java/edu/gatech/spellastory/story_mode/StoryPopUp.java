@@ -171,6 +171,7 @@ public class StoryPopUp extends AppCompatActivity {
     }
 
     private void setImageButtonActions() {
+        // on click selects word
         pic1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -188,6 +189,16 @@ public class StoryPopUp extends AppCompatActivity {
             }
         });
 
+        // long press plays audio of word
+        pic1.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                setAudioFor(selectedWords.get(0)).start();
+                return true;
+            }
+        });
+
+        // on click selects word
         pic2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -205,6 +216,16 @@ public class StoryPopUp extends AppCompatActivity {
             }
         });
 
+        // long press plays audio of word
+        pic2.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                setAudioFor(selectedWords.get(1)).start();
+                return true;
+            }
+        });
+
+        // on click selects word
         pic3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -219,6 +240,15 @@ public class StoryPopUp extends AppCompatActivity {
                     setResult(StoryActivity.WORD_CODE, returnData);
                 }
                 finish();
+            }
+        });
+
+        // long press plays audio of word
+        pic3.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                setAudioFor(selectedWords.get(2)).start();
+                return true;
             }
         });
     }
@@ -280,6 +310,20 @@ public class StoryPopUp extends AppCompatActivity {
         MediaPlayer mp = new MediaPlayer();
         try {
             AssetFileDescriptor afd = getAssets().openFd("audio/names/" + name + ".mp3");
+            mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+            afd.close();
+            mp.prepare();
+        } catch (IOException e) {
+            // Could not find audio file associate with the word
+            e.printStackTrace();
+        }
+        return mp;
+    }
+
+    private MediaPlayer setAudioFor(Word word) {
+        MediaPlayer mp = new MediaPlayer();
+        try {
+            AssetFileDescriptor afd = getAssets().openFd("audio/words/" + word.getSpelling() + ".mp3");
             mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
             afd.close();
             mp.prepare();
