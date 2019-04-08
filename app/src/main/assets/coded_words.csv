@@ -6,7 +6,7 @@ bat,animals,13,2,96
 cat,animals,16,2,96
 fall,doing,36,3,58,58
 swan,birds,95,3,61
-ball,house stuff,13,3,58,58
+ball,toys,13,3,58,58
 sofa,house stuff,84,65,36,4
 afraid,describe,4,38,5,22
 zebra,animals,113,24,15,4
@@ -18,7 +18,7 @@ net,house stuff,61,25,96
 camel,animals,16,2,60,26,58
 kitten,animals,56,45,96,96,0,61
 five,describe,36,44,106,0
-slide,house stuff,89,44,22,0
+slide,toys,89,44,22,0
 ice,outdoors,44,17,0
 hit,doing,43,45,96
 fish,doing,36,45,87
@@ -36,12 +36,12 @@ hot,describe,43,66,96
 pot,house stuff,79,66,96
 love,doing,58,67,106,0
 glove,clothes,41,67,106,0
-wagon,house stuff,107,2,40,67,61
+wagon,toys,107,2,40,67,61
 tuba,house stuff,96,101,13,4
 flute,things,37,101,96,0
 suit,clothes,84,101,0,96
 music,house stuff,60,102,85,45,16
-unicycle,house stuff,102,61,45,17,111,16,59
+unicycle,toys,102,61,45,17,111,16,59
 ambulance,vehicles,2,60,13,102,58,4,61,17,0
 bus,vehicles,13,103,84
 bug,,13,103,40
@@ -134,7 +134,7 @@ ron,,83,66,61
 peg,,79,25,40
 luz,,58,101,113
 nia,,61,45a,4
-block,house stuff,14,66,19
+block,toys,14,66,19
 blanket,things,14,7,56,33
 brown,colors,15,77,61
 broom,things,15,72,60
@@ -171,7 +171,7 @@ plane,vehicles,80,1,61,0
 plug,house stuff,80,103,40
 prize,house stuff,81,44,113,0
 pretzel,food,81,32,113,26,58
-present,house stuff,81,25,85,26,61,96
+present,toys,81,25,85,26,61,96
 school,places,86,0,72,58
 scarf,clothes,86,8,36
 scold,doing,86,65,58,22
@@ -198,7 +198,7 @@ string,house stuff,94,45,63
 stripes,describe,94,44,79,0,85
 ostrich,birds,66,94,45,18
 swim,doing,95,45,60
-swing,house stuff,95,45,63
+swing,toys,95,45,63
 mother,people,60,67,97,31
 father,people,36,3,97,31
 clothes,clothes,20,65,97,0,85
@@ -222,7 +222,7 @@ saucepan,house stuff,84,10,17,0,79,7
 centaur,pretend,17,25,61,96,10,83
 paw,animals,79,11
 play,doing,80,12
-crayon,house stuff,21,12,66,61
+crayon,toys,21,12,66,61
 seal,water animals,84,27,58
 read,doing,83,27,22
 bear,animals,13,28,83
@@ -274,12 +274,12 @@ dozer,vehicles,22,65,113,31
 tiger,animals,96,44,40,31
 pet,animals,79,32
 lettuce,food,57,32,0,103,17,0
-puppet,house stuff,79,103,79,79,33
+puppet,toys,79,103,79,79,33
 hatchet,tools,43,2,96,18,33
 high,describe,43,49
 thigh,body parts,98,49
 milk,food,60,51,56
-stilts,house stuff,93,51,96,85
+stilts,toys,93,51,96,85
 pencil,house stuff,79,25,61,17,51
 hill,places,43,52
 drill,tools,23,52
@@ -317,7 +317,7 @@ cyclops,pretend,17,111,20,66,79,84
 dragon,pretend,23,2,40,67,61
 mermaid,pretend,60,31,60,5,22
 shark,water animals,87,9,56
-doll,house stuff,22,66,58,58
+doll,toys,22,66,58,58
 boat,vehicles,13,68,96
 gokart,,40,65,56,8,96
 moped,vehicles,60,65,79,25,22

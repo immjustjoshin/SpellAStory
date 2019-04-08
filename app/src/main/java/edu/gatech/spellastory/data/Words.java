@@ -1,6 +1,7 @@
 package edu.gatech.spellastory.data;
 
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 
@@ -72,11 +73,11 @@ class Words extends AppCompatActivity {
     }
 
     // return a list of **up to** k random solved words for a category, may not be k solved words available
-    List<String> getSolvedWordsFromCategory(int k, String category) {
-        List<Word> completed = getCompletedWords();
+    List<Word> getSolvedWordsFromCategory(int k, String category, Context context) {
+        List<Word> completed = getCompletedWords(context);
         Collections.shuffle(completed); // randomize list
 
-        List<String> out = new ArrayList<>();
+        List<Word> out = new ArrayList<>();
 
         List<String> categoryWords = categoryMap.get(category);
         if (categoryWords == null) return out;
@@ -85,7 +86,7 @@ class Words extends AppCompatActivity {
             if (i >= k) return out; // retrieve at most k words
             String temp = word.getSpelling();
             if (categoryWords.contains(temp)) {
-                out.add(temp);
+                out.add(word);
                 i++;
             }
         }
@@ -93,8 +94,8 @@ class Words extends AppCompatActivity {
     }
 
     // return a list of **up to** k random unsolved words for a category, may not be k unsolved words available
-    List<String> getUnsolvedWordsFromCategory(int k, String category) {
-        List<Word> completed = getCompletedWords();
+    List<String> getUnsolvedWordsFromCategory(int k, String category, Context context) {
+        List<Word> completed = getCompletedWords(context);
         List<String> out = new ArrayList<>();
 
         List<String> completedString = new ArrayList<>();
@@ -125,9 +126,9 @@ class Words extends AppCompatActivity {
 
     /* Took function from WordBankListActivity.java, probably don't need to copy everything over
        but I just put getWordsFromCategory() in this class for the time being */
-    private List<Word> getCompletedWords() {
+    private List<Word> getCompletedWords(Context context) {
         List<Word> wordsCompleted = new ArrayList<>();
-        SharedPreferences pref = getApplicationContext().getSharedPreferences("completedWords", MODE_PRIVATE);
+        SharedPreferences pref = context.getSharedPreferences("completedWords", MODE_PRIVATE);
         Map<String, ?> map = pref.getAll();
         List<String> keys = new ArrayList<>(map.keySet());
         Gson gson = new Gson();

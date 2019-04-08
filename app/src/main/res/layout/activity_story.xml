@@ -30,14 +30,6 @@
         app:layout_constraintTop_toBottomOf="@id/iv_story_template"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
-    <Button
-        android:id="@+id/popup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="click me"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent" />
-
     <TextView
         android:id="@+id/tv_placeholder"
         android:layout_width="match_parent"

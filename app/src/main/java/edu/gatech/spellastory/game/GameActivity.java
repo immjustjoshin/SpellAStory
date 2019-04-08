@@ -354,7 +354,7 @@ public class GameActivity extends AppCompatActivity implements GameEndDialogFrag
         MediaPlayer mp = new MediaPlayer();
         try {
             AssetManager temp = getAssets();
-            String[] files = temp.list("audio/positive_praise_words");
+            String[] files = temp.list("audio/positive_praise_words/");
 
             // Chooses random integer to call random praise word audio
             Random r = new Random();
@@ -362,7 +362,7 @@ public class GameActivity extends AppCompatActivity implements GameEndDialogFrag
             if (files != null) {
                 i = r.nextInt(files.length) + 1;
             }
-            AssetFileDescriptor afd = getAssets().openFd("audio/positive_praise_words/a(" + i + ").mp3");
+            AssetFileDescriptor afd = getAssets().openFd("audio/positive_praise_words/ppw(" + i + ").mp3");
             mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
             afd.close();
             mp.prepare();

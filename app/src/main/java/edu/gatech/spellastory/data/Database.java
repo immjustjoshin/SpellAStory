@@ -1,5 +1,6 @@
 package edu.gatech.spellastory.data;
 
+import android.content.Context;
 import android.content.res.AssetManager;
 
 import java.io.IOException;
@@ -103,5 +104,9 @@ public class Database {
 
     public Story getStory(String name) {
         return storiesDb.getStory(name);
+    }
+
+    public List<Word> getSolvedWordsFromCategory(int k, String category, Context context) {
+        return wordsDb.getSolvedWordsFromCategory(k, category, context);
     }
 }
