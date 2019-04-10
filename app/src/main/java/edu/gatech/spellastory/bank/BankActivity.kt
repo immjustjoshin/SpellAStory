@@ -8,6 +8,7 @@ import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import edu.gatech.spellastory.R
 import edu.gatech.spellastory.data.Words
+import edu.gatech.spellastory.data.WordsDb
 import edu.gatech.spellastory.domain.Word
 import kotlinx.android.synthetic.main.activity_bank.*
 
@@ -19,7 +20,7 @@ class BankActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bank)
 
-        rv_bank.adapter = BankAdapter(Words.getInstance(this).completedWords)
+        rv_bank.adapter = BankAdapter(WordsDb.completedWords)
         rv_bank.layoutManager = LinearLayoutManager(this)
         rv_bank.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
     }

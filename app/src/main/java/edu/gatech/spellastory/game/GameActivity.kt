@@ -9,7 +9,7 @@ import android.support.v7.app.AppCompatActivity
 import android.text.Html
 import android.widget.TextView
 import edu.gatech.spellastory.R
-import edu.gatech.spellastory.data.Phonemes
+import edu.gatech.spellastory.data.PhonemesDb
 import edu.gatech.spellastory.domain.Phoneme
 import edu.gatech.spellastory.domain.Word
 import edu.gatech.spellastory.story.GameFinishIntent
@@ -21,7 +21,7 @@ import kotlin.math.sqrt
 import kotlin.math.truncate
 
 fun Context.GameIntent(word: Word) = Intent(this, GameActivity::class.java)
-    .apply { putExtra(INTENT_WORD, word) }
+        .apply { putExtra(INTENT_WORD, word) }
 
 private const val INTENT_WORD = "word"
 
@@ -75,7 +75,7 @@ class GameActivity : AppCompatActivity(), GameEndDialogFragment.Listener {
         val mp = MediaPlayer()
         try {
             val afd =
-                assets.openFd("audio/${if (word.category?.name == "friends") "names" else "words"}/${word.spelling}.mp3")
+                    assets.openFd("audio/${if (word.category?.name == "friends") "names" else "words"}/${word.spelling}.mp3")
             mp.setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
             afd.close()
             mp.prepare()
@@ -92,7 +92,7 @@ class GameActivity : AppCompatActivity(), GameEndDialogFragment.Listener {
         options.add(currentPhoneme)
 
         while (options.size < PHONEME_OPTIONS_COUNT) {
-            val randomPhoneme = Phonemes.getInstance(this).randomPhoneme
+            val randomPhoneme = PhonemesDb.randomPhoneme
             if (randomPhoneme.isSilent) continue
             if (randomPhoneme.spelling in options.map { it.spelling }) continue
             options.add(randomPhoneme)

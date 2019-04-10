@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import edu.gatech.spellastory.R
 import edu.gatech.spellastory.data.Levels
+import edu.gatech.spellastory.data.LevelsDb
 import edu.gatech.spellastory.data.PhonemeWordsPair
 import edu.gatech.spellastory.game.GameIntent
 import kotlinx.android.synthetic.main.activity_phoneme_list.*
@@ -20,7 +21,7 @@ class PhonemeListActivity : AppCompatActivity() {
 
     private var level: Int = -1
     private val levelData: List<PhonemeWordsPair>
-        get() = Levels.getInstance(this).getWordsForLevel(level)
+        get() = LevelsDb.getWordsForLevel(level)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

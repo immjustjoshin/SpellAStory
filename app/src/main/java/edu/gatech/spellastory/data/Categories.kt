@@ -1,11 +1,15 @@
 package edu.gatech.spellastory.data
 
+import android.app.Activity
 import android.content.Context
 import com.opencsv.CSVIterator
 import com.opencsv.CSVReader
 import edu.gatech.spellastory.domain.Category
 import edu.gatech.spellastory.util.SingletonHolder
 import java.io.InputStreamReader
+
+val Activity.CategoriesDb
+    get() = Categories.getInstance(this)
 
 class Categories private constructor(context: Context) {
 
@@ -25,7 +29,7 @@ class Categories private constructor(context: Context) {
     fun getCategory(code: Int): Category = Category(code, categories.getValue(code))
 
     fun getCategories(vararg codes: String): List<Category> =
-        getCategories(*codes.map { Integer.parseInt(it) }.toIntArray())
+            getCategories(*codes.map { Integer.parseInt(it) }.toIntArray())
 
     fun getCategories(vararg codes: Int): List<Category> = codes.map { getCategory(it) }
 

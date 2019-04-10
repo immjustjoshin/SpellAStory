@@ -12,6 +12,7 @@ import android.text.TextWatcher
 import android.widget.ScrollView
 import edu.gatech.spellastory.R
 import edu.gatech.spellastory.data.Stories
+import edu.gatech.spellastory.data.StoriesDb
 import edu.gatech.spellastory.domain.Category
 import edu.gatech.spellastory.domain.Word
 import edu.gatech.spellastory.domain.stories.Story
@@ -44,7 +45,7 @@ class StoryActivity : AppCompatActivity() {
 
         title = intent.getStringExtra(INTENT_STORY)
         requireNotNull(title) { "no story provided in Intent extras" }
-        this.story = Stories.getInstance(this).getStory(convertTitle(title))
+        this.story = StoriesDb.getStory(convertTitle(title))
 
         img_background.setImageDrawable(getStoryDrawable(title))
         txt_story.addTextChangedListener(object : TextWatcher {

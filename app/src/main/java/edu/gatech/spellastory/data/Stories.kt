@@ -1,5 +1,6 @@
 package edu.gatech.spellastory.data
 
+import android.app.Activity
 import android.content.Context
 import edu.gatech.spellastory.domain.Category
 import edu.gatech.spellastory.domain.stories.Story
@@ -10,6 +11,9 @@ import edu.gatech.spellastory.util.SingletonHolder
 import org.apache.commons.lang3.NotImplementedException
 import java.io.BufferedReader
 import java.io.InputStreamReader
+
+val Activity.StoriesDb
+    get() = Stories.getInstance(this)
 
 class Stories private constructor(context: Context) {
 
@@ -100,7 +104,7 @@ class Stories private constructor(context: Context) {
     private fun isNewline(string: String): Boolean = string == "\n"
 
     private fun isText(string: String): Boolean =
-        isAudio(string) == null && isBlank(string) == null
+            isAudio(string) == null && isBlank(string) == null
 
     companion object : SingletonHolder<Stories, Context>(::Stories) {
         private const val PUNCTUATION = ".,:;"

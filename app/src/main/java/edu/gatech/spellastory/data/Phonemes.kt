@@ -1,12 +1,16 @@
 package edu.gatech.spellastory.data
 
+import android.app.Activity
 import android.content.Context
 import com.opencsv.CSVIterator
 import com.opencsv.CSVReader
 import edu.gatech.spellastory.domain.Phoneme
 import edu.gatech.spellastory.util.SingletonHolder
 import java.io.InputStreamReader
-import java.util.Arrays
+import java.util.*
+
+val Activity.PhonemesDb
+    get() = Phonemes.getInstance(this)
 
 class Phonemes private constructor(context: Context) {
 

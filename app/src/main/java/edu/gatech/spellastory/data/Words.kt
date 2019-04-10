@@ -1,5 +1,6 @@
 package edu.gatech.spellastory.data
 
+import android.app.Activity
 import android.content.Context
 import com.opencsv.CSVIterator
 import com.opencsv.CSVReader
@@ -8,7 +9,10 @@ import edu.gatech.spellastory.domain.Phoneme
 import edu.gatech.spellastory.domain.Word
 import edu.gatech.spellastory.util.SingletonHolder
 import java.io.InputStreamReader
-import java.util.Arrays
+import java.util.*
+
+val Activity.WordsDb
+    get() = Words.getInstance(this)
 
 class Words private constructor(private val context: Context) {
 
@@ -22,7 +26,7 @@ class Words private constructor(private val context: Context) {
     private fun read(reader: CSVReader, context: Context) = CSVIterator(reader).asSequence().map { line ->
         val spelling = line[0]
         val category =
-            if (line[1].isEmpty()) null else Categories.getInstance(context).getCategory(Integer.parseInt(line[1]))
+                if (line[1].isEmpty()) null else Categories.getInstance(context).getCategory(Integer.parseInt(line[1]))
         val phonemeCodes = Arrays.copyOfRange(line, 2, line.size)
         val phonemes = Phonemes.getInstance(context).getPhonemes(phonemeCodes)
 
@@ -66,10 +70,10 @@ class Words private constructor(private val context: Context) {
     fun getIncompleteWordsForCategory(category: Category) = incompleteWords.filter { it.category == category }
 
     fun getCompletedWordsForCategories(categories: List<Category>): List<Word> =
-        completedWords.filter { it.category in categories }
+            completedWords.filter { it.category in categories }
 
     fun getIncompleteWordsForCategories(categories: List<Category>): List<Word> =
-        incompleteWords.filter { it.category in categories }
+            incompleteWords.filter { it.category in categories }
 
     companion object : SingletonHolder<Words, Context>(::Words)
 }
