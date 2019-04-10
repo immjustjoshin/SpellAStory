@@ -1,14 +1,3 @@
 <resources>
-    <string name="app_name">SpellAStory</string>
-    <string name="title">Spell A Story</string>
-    <string name="picture">Picture</string>
-    <string name="name">Name</string>
-    <string name="choose_mode">Choose Mode</string>
-    <string name="spell_a_word">Spell A Word</string>
-    <string name="spell_a_story">Spell A Story</string>
-    <string name="word_bank">Word Bank</string>
-    <string name="story_script">Story Script</string>
-    <string name="word">Word</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="spell_more">Oops! Looks like you haven\'t spelled enough words. Go to the Spell A Word mode and get spelling!</string>
+    <string name="app_name">Spell-a-Story</string>
 </resources>

@@ -4,46 +4,39 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".story_mode.StoryActivity">
+    tools:context=".story.StoryActivity">
 
     <ImageView
-        android:id="@+id/iv_story_template"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_launcher_foreground"
-        android:adjustViewBounds="true"
-        android:contentDescription="@string/picture"
-        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/img_background"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toTopOf="@+id/scroll"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintRight_toRightOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@drawable/placeholder" />
 
-    <ImageView
-        android:id="@+id/iv_speech_bubble"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:src="@drawable/ic_launcher_foreground"
-        android:contentDescription="@string/picture"
-        android:adjustViewBounds="true"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/iv_story_template"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+    <ScrollView
+        android:id="@+id/scroll"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/img_background">
 
-    <TextView
-        android:id="@+id/tv_placeholder"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scrollbars="vertical"
-        android:gravity="bottom"
-        android:paddingTop="275dp"
-        android:paddingBottom="275dp"
-        android:paddingStart="32dp"
-        android:paddingEnd="32dp"
-        android:textSize="23sp"
-        app:layout_constraintTop_toTopOf="@id/iv_speech_bubble"
-        app:layout_constraintLeft_toLeftOf="@id/iv_speech_bubble"
-        app:layout_constraintRight_toRightOf="@id/iv_speech_bubble"
-        app:layout_constraintBottom_toBottomOf="@id/iv_speech_bubble"/>
-
+        <edu.gatech.spellastory.util.TypeWriter
+            android:id="@+id/txt_story"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/img_background"
+            tools:text="Story text" />
+    </ScrollView>
 </android.support.constraint.ConstraintLayout>
