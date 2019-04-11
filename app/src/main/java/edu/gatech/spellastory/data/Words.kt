@@ -32,6 +32,15 @@ class Words private constructor(private val context: Context) {
 
         val word = makeWord(spelling, phonemes, category)
         word.validate()
+
+        // Friends are unlocked by default
+        if (word.category?.code == 2) {
+            val prefs = context.applicationContext.getSharedPreferences("completedWords", Context.MODE_PRIVATE)
+            val editor = prefs.edit()
+
+            editor.putBoolean(word.spelling, true)
+            editor.apply()
+        }
         word
     }.toList()
 
