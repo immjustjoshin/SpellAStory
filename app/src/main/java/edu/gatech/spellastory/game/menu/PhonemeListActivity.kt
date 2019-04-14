@@ -31,7 +31,7 @@ class PhonemeListActivity : AppCompatActivity() {
         require(level != -1) { "no level provided in Intent extras" }
 
         rv_phonemes.adapter =
-            PhonemeListAdapter(levelData) { word -> startActivity(GameIntent(word)) }
+            PhonemeListAdapter(levelData) { word -> startActivity(GameIntent(word, level)) }
         rv_phonemes.layoutManager = LinearLayoutManager(this)
     }
 }

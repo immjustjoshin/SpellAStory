@@ -91,7 +91,7 @@ class StoryActivity : AppCompatActivity() {
         dialog = StoryBlankDialog(
             categories,
             { word -> chooseWord(word) },
-            { word -> startActivityForResult(GameIntent(word), GAME_RESULT_REQUEST) }) {
+            { word -> startActivityForResult(GameIntent(word, 0), GAME_RESULT_REQUEST) }) {
             cancelable = false
             isBackGroundTransparent = false
         }

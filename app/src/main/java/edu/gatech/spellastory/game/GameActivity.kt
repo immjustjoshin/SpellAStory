@@ -20,22 +20,31 @@ import kotlin.math.ceil
 import kotlin.math.sqrt
 import kotlin.math.truncate
 
-fun Context.GameIntent(word: Word) = Intent(this, GameActivity::class.java)
-        .apply { putExtra(INTENT_WORD, word) }
+fun Context.GameIntent(word: Word, level: Int) = Intent(this, GameActivity::class.java)
+        .apply { putExtra(INTENT_WORD, word)
+                 putExtra(INTENT_LVL, level)}
 
 private const val INTENT_WORD = "word"
+private const val INTENT_LVL = "level"
 
 class GameActivity : AppCompatActivity(), GameEndDialogFragment.Listener {
 
     private lateinit var word: Word
+    private var level = -1
     private lateinit var spellingSequence: List<Phoneme>
+    private var phonemeOptionsCount = 4
     private var spelledCount = 0
     private val currentPhoneme: Phoneme
         get() = spellingSequence[spelledCount]
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
+
+        level = intent.getSerializableExtra(INTENT_LVL) as Int
+        require(level != -1) { "no level provided in Intent extras" }
+        if (level == 8) phonemeOptionsCount = 15
 
         word = intent.getSerializableExtra(INTENT_WORD) as Word
         requireNotNull(word) { "no word provided in Intent extras" }
@@ -89,9 +98,13 @@ class GameActivity : AppCompatActivity(), GameEndDialogFragment.Listener {
 
     private fun makePhonemeOptions(): List<Phoneme> {
         val options = mutableListOf<Phoneme>()
-        options.add(currentPhoneme)
+        if (level == 8) {
+            options.addAll(spellingSequence)
+        } else {
+            options.add(currentPhoneme)
+        }
 
-        while (options.size < PHONEME_OPTIONS_COUNT) {
+        while (options.size < phonemeOptionsCount) {
             val randomPhoneme = PhonemesDb.randomPhoneme
             if (randomPhoneme.isSilent) continue
             if (randomPhoneme.spelling in options.map { it.spelling }) continue
@@ -104,7 +117,7 @@ class GameActivity : AppCompatActivity(), GameEndDialogFragment.Listener {
     private fun setPhonemeButtons(phonemes: List<Phoneme>) {
         grid.removeAllViews()
 
-        val (col, row) = square(PHONEME_OPTIONS_COUNT)
+        val (col, row) = square(phonemeOptionsCount)
         grid.columnCount = col
         grid.rowCount = row
 
@@ -120,7 +133,8 @@ class GameActivity : AppCompatActivity(), GameEndDialogFragment.Listener {
                         GameEndDialogFragment.newInstance().show(supportFragmentManager, "win")
                     } else {
                         playPositiveSound()
-                        setPhonemeButtons(makePhonemeOptions())
+                        if (level == 8) {it.setEnabled(false)}
+                        else {setPhonemeButtons(makePhonemeOptions())}
                     }
                 } else {
                     playNegativeSound()
@@ -148,8 +162,8 @@ class GameActivity : AppCompatActivity(), GameEndDialogFragment.Listener {
     data class Square(val h: Int, val v: Int)
 
     private fun square(k: Int): Square {
-        val v = truncate(sqrt(k.toDouble())).toInt()
-        val h = ceil(k.toDouble() / v).toInt()
+        val v = ceil(sqrt(k.toDouble())).toInt()
+        val h = truncate(k.toDouble() / v).toInt()
         return Square(h, v)
     }
 
@@ -194,9 +208,5 @@ class GameActivity : AppCompatActivity(), GameEndDialogFragment.Listener {
     override fun onFinishClicked() {
         setResult(Activity.RESULT_OK, GameFinishIntent(word))
         finish()
-    }
-
-    companion object {
-        private const val PHONEME_OPTIONS_COUNT = 4
     }
 }
