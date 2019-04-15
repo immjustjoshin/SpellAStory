@@ -5,15 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import edu.gatech.spellastory.R
+import edu.gatech.spellastory.domain.stories.Story
 import edu.gatech.spellastory.util.getStoryDrawable
 import kotlinx.android.synthetic.main.item_story_list.view.*
 
-class StoryListAdapter(private val stories: List<String>, private val clickListener: (String) -> Unit) :
-    RecyclerView.Adapter<StoryListAdapter.ViewHolder>() {
+class StoryListAdapter(private val stories: List<Story>, private val clickListener: (Story) -> Unit) :
+        RecyclerView.Adapter<StoryListAdapter.ViewHolder>() {
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bind(story: String, clickListener: (String) -> Unit) {
-            itemView.btn_story.text = story
+        fun bind(story: Story, clickListener: (Story) -> Unit) {
+            itemView.btn_story.text = story.title
 
             val drawable = itemView.context.getStoryDrawable(story)
             drawable.setBounds(0, 0, 400, 400)

@@ -1,5 +1,7 @@
 package edu.gatech.spellastory.domain.stories
 
-interface StoryToken {
+import java.io.Serializable
+
+interface StoryToken : Serializable {
     val isBlank: Boolean
 }

@@ -17,20 +17,18 @@ val Activity.StoriesDb
 
 class Stories private constructor(context: Context) {
 
-    private val stories: Map<String, Story> by lazy {
+    val stories: List<Story> by lazy {
         val reader = BufferedReader(InputStreamReader(context.assets.open("coded_phonemes.csv")))
         val phonemes = read(context, "the_special_invention")
         reader.close()
         phonemes
     }
 
-    fun getStory(story: String) = stories.getValue(story)
-
-    private fun read(context: Context, vararg stories: String) = stories.map { story ->
-        val reader = BufferedReader(InputStreamReader(context.assets.open("stories/$story.txt")))
+    private fun read(context: Context, vararg stories: String) = stories.map { filename ->
+        val reader = BufferedReader(InputStreamReader(context.assets.open("stories/$filename.txt")))
         val text = reader.lineSequence().joinToString(" \n")
-        story to Story(parseText(text, Categories.getInstance(context)))
-    }.toMap()
+        Story(filename, parseText(text, Categories.getInstance(context)))
+    }
 
     private fun parseText(storyText: String, categoriesDb: Categories): List<StoryToken> {
         val storyTokens = mutableListOf<StoryToken>()

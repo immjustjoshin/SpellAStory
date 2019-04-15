@@ -6,6 +6,7 @@ import android.graphics.ColorMatrixColorFilter
 import android.graphics.drawable.Drawable
 import edu.gatech.spellastory.R
 import edu.gatech.spellastory.domain.Word
+import edu.gatech.spellastory.domain.stories.Story
 import java.io.FileNotFoundException
 
 fun Context.getWordDrawable(word: Word): Drawable {
@@ -17,8 +18,8 @@ fun Context.getWordDrawable(word: Word): Drawable {
     }
 }
 
-fun Context.getStoryDrawable(story: String): Drawable {
-    val ims = assets.open("pictures/story_templates/$story.png")
+fun Context.getStoryDrawable(story: Story): Drawable {
+    val ims = assets.open("pictures/story_templates/${story.filename}.png")
     return Drawable.createFromStream(ims, null)
 }
 
