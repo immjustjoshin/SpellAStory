@@ -2,10 +2,6 @@ Spell-a-Story
 ===
 
 
-## Table of Contents
-
-[TOC]
-
 ## Release Notes
 
 ### v1.0.0
