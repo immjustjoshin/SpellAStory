@@ -1,10 +1,3 @@
 <resources>
-    <string name="app_name">SpellAStory</string>
-    <string name="title">Spell A Story</string>
-    <string name="picture">Picture</string>
-    <string name="name">Name</string>
-    <string name="choose_mode">Choose Mode</string>
-    <string name="spell_a_word">Spell A Word</string>
-    <string name="spell_a_story">Spell A Story</string>
-    <string name="word_bank">Word Bank</string>
+    <string name="app_name">Brainy Spelling 2</string>
 </resources>
