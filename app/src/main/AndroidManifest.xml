@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="edu.gatech.spellastory"
-    tools:ignore="GoogleAppIndexingWarning">
+    package="edu.gatech.spellastory">
 
     <application
         android:allowBackup="true"
@@ -11,23 +10,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:ignore="AllowBackup">
-        <activity android:name=".story_mode.StoryPopUp"
-            android:theme="@style/AppTheme.StoryPopup">
-        </activity>
-        <activity android:name=".story_mode.StoryActivity" />
-        <activity android:name=".story_template_list.StoryListActivity" />
-        <activity android:name=".HomeScreen">
+        tools:ignore="AllowBackup,GoogleAppIndexingWarning">
+        <activity android:name=".story.StoryActivity" />
+        <activity android:name=".story.menu.StoryListActivity" />
+        <activity android:name=".bank.BankActivity" />
+        <activity android:name=".game.GameActivity" />
+        <activity android:name=".game.menu.PhonemeListActivity" />
+        <activity android:name=".game.menu.LevelSelectActivity" />
+        <activity android:name=".HomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".word_bank_list.WordBankListActivity" />
-        <activity android:name=".phoneme_list.PhonemeListActivity" />
-        <activity android:name=".game.GameActivity" />
-        <activity android:name=".menu.LevelSelectMenu" />
     </application>
 
 </manifest>
