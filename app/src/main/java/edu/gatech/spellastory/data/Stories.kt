@@ -2,6 +2,7 @@ package edu.gatech.spellastory.data
 
 import android.app.Activity
 import android.content.Context
+import android.util.Log
 import edu.gatech.spellastory.domain.Category
 import edu.gatech.spellastory.domain.stories.Story
 import edu.gatech.spellastory.domain.stories.StoryBlank
@@ -19,7 +20,7 @@ class Stories private constructor(context: Context) {
 
     val stories: List<Story> by lazy {
         val reader = BufferedReader(InputStreamReader(context.assets.open("coded_phonemes.csv")))
-        val phonemes = read(context, "the_special_invention")
+        val phonemes = read(context, "the_special_invention", "the_space_alien", "santas_mixed_up_helper_elf", "magical_wheels")
         reader.close()
         phonemes
     }
@@ -28,13 +29,45 @@ class Stories private constructor(context: Context) {
         return stories.find { it.title == title }
     }
 
-    private fun read(context: Context, vararg stories: kotlin.String) = stories.map { filename ->
+    private fun read(context: Context, vararg stories: kotlin.String) = stories.mapNotNull { filename ->
         val reader = BufferedReader(InputStreamReader(context.assets.open("stories/$filename.txt")))
         val text = reader.lineSequence().joinToString(" \n")
-        Story(filename, parseText(text, Categories.getInstance(context)))
+        try {
+            Story(filename, parseText(text, Categories.getInstance(context)))
+        } catch (e: NotImplementedException) {
+            Log.e("Stories", e.message + " in story " + filename)
+            null
+        }
+//        Story(filename, parseHtml(text, Categories.getInstance(context)))
     }
 
-    private fun parseText(storyText: kotlin.String, categoriesDb: Categories): List<StoryToken> {
+//    private fun parseHtml(storyHtml: String, categoriesDb: Categories): List<StoryToken> {
+//        val list = mutableListOf<StoryToken>()
+//        val doc = Jsoup.parse(storyHtml)
+//        doc.body().select("s-p").forEach { p ->
+//            list.add(Newline())
+//
+//            var token: StoryToken? = null
+//            p.children().forEach { a ->
+//                if (a.tagName().equals("s-audio", true)) {
+//                    if (token == null) token = StoryLine(a.attr("data-src"), a.text())
+//                    else (token as StoryLine).text += a.text()
+//                } else if (a.tagName().equals("s-blank", true)) {
+//                    if (token == null) token = StoryBlank(a.className(), )
+//                }
+//            }
+//        }
+//
+//        val text = Html.fromHtml(storyHtml, null, Html.TagHandler { opening, tag, output, xmlReader ->
+//            if (tag.equals("s-p", true)) list.add(Newline())
+//            else if (tag.equals("s-audio", true)) {
+//
+//            }
+//        })
+//    }
+
+    @Throws(NotImplementedException::class)
+    private fun parseText(storyText: String, categoriesDb: Categories): List<StoryToken> {
         val storyTokens = mutableListOf<StoryToken>()
         val tokens = storyText.split(" ")
         val blankCategories = mutableMapOf<kotlin.String, List<Category>>()

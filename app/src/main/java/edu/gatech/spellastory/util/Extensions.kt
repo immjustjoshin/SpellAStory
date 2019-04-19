@@ -19,8 +19,12 @@ fun Context.getWordDrawable(word: Word): Drawable {
 }
 
 fun Context.getStoryDrawable(story: Story): Drawable {
-    val ims = assets.open("pictures/story_templates/${story.filename}.png")
-    return Drawable.createFromStream(ims, null)
+    return try {
+        val ims = assets.open("pictures/story_templates/${story.filename}.png")
+        Drawable.createFromStream(ims, null)
+    } catch (e: FileNotFoundException) {
+        resources.getDrawable(R.drawable.placeholder)
+    }
 }
 
 fun Drawable.convertToGreyscale(): Drawable {
