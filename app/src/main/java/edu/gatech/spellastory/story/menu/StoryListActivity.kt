@@ -18,7 +18,7 @@ class StoryListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_story_list)
 
-        rv_stories.adapter = StoryListAdapter(StoriesDb.stories) { story -> startActivity(StoryIntent(story)) }
+        rv_stories.adapter = StoryListAdapter(StoriesDb.stories) { story -> startActivity(StoryIntent(story.title)) }
         rv_stories.layoutManager = LinearLayoutManager(this)
     }
 }

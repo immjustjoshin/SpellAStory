@@ -10,6 +10,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.widget.ScrollView
 import edu.gatech.spellastory.R
+import edu.gatech.spellastory.data.StoriesDb
 import edu.gatech.spellastory.domain.Word
 import edu.gatech.spellastory.domain.stories.Story
 import edu.gatech.spellastory.domain.stories.StoryBlank
@@ -18,23 +19,20 @@ import edu.gatech.spellastory.game.GameIntent
 import edu.gatech.spellastory.util.AudioPlayer
 import edu.gatech.spellastory.util.getStoryDrawable
 import kotlinx.android.synthetic.main.activity_story.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
-fun Context.StoryIntent(story: Story): Intent = Intent(this, StoryActivity::class.java)
-        .apply { putExtra(INTENT_STORY, story) }
+fun Context.StoryIntent(story_title: String): Intent = Intent(this, StoryActivity::class.java)
+        .apply { putExtra(INTENT_TITLE, story_title) }
 
-private const val INTENT_STORY = "story"
+private const val INTENT_TITLE = "title"
 
 fun Context.GameFinishIntent(word: Word) = Intent().apply { putExtra(INTENT_WORD, word) }
 
 private const val INTENT_WORD = "word"
 
-class StoryActivity : AppCompatActivity(), CoroutineScope by CoroutineScope(Dispatchers.Default) {
+class StoryActivity : AppCompatActivity() {
 
     private lateinit var story: Story
+    private val blanks = mutableMapOf<String, Word>()
     private var storyPosition: Int = -1
     private var dialog: AlertDialog? = null
     private var audioPlayer: AudioPlayer? = null
@@ -43,8 +41,9 @@ class StoryActivity : AppCompatActivity(), CoroutineScope by CoroutineScope(Disp
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_story)
 
-        story = intent.getSerializableExtra(INTENT_STORY) as Story
-        requireNotNull(story) { "no story provided in Intent extras" }
+        val title = intent.getStringExtra(INTENT_TITLE)
+        requireNotNull(title) { "no story title provided in Intent extras" }
+        story = StoriesDb.getStory(title)!!
 
         img_background.setImageDrawable(getStoryDrawable(story))
         txt_story.addTextChangedListener(object : TextWatcher {
@@ -60,12 +59,19 @@ class StoryActivity : AppCompatActivity(), CoroutineScope by CoroutineScope(Disp
         showNextLine()
     }
 
+    private fun setBlank(blank: StoryBlank, word: Word) {
+        blanks[blank.identifier] = word
+    }
+
+    private fun getBlank(blank: StoryBlank) = blanks[blank.identifier]
+
     private fun showNextLine() {
         storyPosition++
+        if (storyPosition >= story.tokens.size) return
         val next = story.tokens[storyPosition]
         if (next.isBlank) {
             val blank = next as StoryBlank
-            val word = story.getBlank(blank)
+            val word = getBlank(blank)
             if (word == null) {
                 txt_story.animateAppend(UNDERLINE) {
                     dialog = StoryBlankDialog(
@@ -86,17 +92,7 @@ class StoryActivity : AppCompatActivity(), CoroutineScope by CoroutineScope(Disp
             val text = line.text
             audioPlayer = AudioPlayer.fromStory(story, line.audioFile, this)
             setDelay(text, audioPlayer!!)
-
-            launch {
-                var audioDone = false
-                var textDone = false
-
-                audioPlayer!!.play { audioDone = true }
-                txt_story.animateAppend(text) { textDone = true }
-
-                while (!(audioDone && textDone)) delay(100L)
-                showNextLine()
-            }
+            playLine(audioPlayer!!, text)
         }
     }
 
@@ -115,7 +111,7 @@ class StoryActivity : AppCompatActivity(), CoroutineScope by CoroutineScope(Disp
 
     private fun chooseWord(word: Word) {
         val blank = story.tokens[storyPosition] as StoryBlank
-        story.setBlank(blank, word)
+        setBlank(blank, word)
 
         dialog?.dismiss()
         dialog = null
@@ -123,21 +119,33 @@ class StoryActivity : AppCompatActivity(), CoroutineScope by CoroutineScope(Disp
         val text = word.spelling
         audioPlayer = AudioPlayer.fromWord(word, this)
         setDelay(text, audioPlayer!!)
+        playLine(audioPlayer!!, text)
+    }
 
-        launch {
-            var audioDone = false
-            var textDone = false
+    private fun playLine(audioPlayer: AudioPlayer, text: String) {
+        var audioDone = false
+        var textDone = false
+        var nextLineTriggered = false
 
-            audioPlayer!!.play { audioDone = true }
-            if (txt_story.text.endsWith(UNDERLINE)) txt_story.remove(UNDERLINE.length)
-            txt_story.animateAppend(text) { textDone = true }
+        audioPlayer.play {
+            audioDone = true
+            if (textDone && !nextLineTriggered) {
+                nextLineTriggered = true
+                showNextLine()
+            }
+        }
 
-            while (!(audioDone && textDone)) delay(100L)
-            showNextLine()
+        if (txt_story.text.endsWith(UNDERLINE)) txt_story.remove(UNDERLINE.length)
+        txt_story.animateAppend(text) {
+            textDone = true
+            if (audioDone && !nextLineTriggered) {
+                nextLineTriggered = true
+                showNextLine()
+            }
         }
     }
 
-    private fun setDelay(text: String, ap: AudioPlayer) {
+    private fun setDelay(text: kotlin.String, ap: AudioPlayer) {
         txt_story.delay = (ap.duration / text.length * 0.7).toLong()
     }
 

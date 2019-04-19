@@ -15,4 +15,9 @@ class PhonemeButton(context: Context, val phoneme: Phoneme) : Button(context) {
     }
 
     fun playAudio() = this.audioPlayer.play()
+
+    override fun onDetachedFromWindow() {
+        audioPlayer.stop()
+        super.onDetachedFromWindow()
+    }
 }

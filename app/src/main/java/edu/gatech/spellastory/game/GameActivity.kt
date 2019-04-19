@@ -28,7 +28,7 @@ fun Context.GameIntent(word: Word, level: Int) = Intent(this, GameActivity::clas
 private const val INTENT_WORD = "word"
 private const val INTENT_LVL = "level"
 
-class GameActivity : AppCompatActivity(), GameEndDialogFragment.Listener {
+class GameActivity : AppCompatActivity() {
 
     private lateinit var word: Word
     private var level = -1
@@ -57,7 +57,7 @@ class GameActivity : AppCompatActivity(), GameEndDialogFragment.Listener {
         btn_image.setImageDrawable(getWordDrawable(word))
         btn_image.setOnClickListener { AudioPlayer.fromWord(word, this).play() }
 
-        setPhonemeButtons(makePhonemeOptions())
+        setPhonemeButtons()
     }
 
     private fun setSpellingText() = txt_spelling.setText(Html.fromHtml(makeUnderlines()), TextView.BufferType.SPANNABLE)
@@ -82,52 +82,24 @@ class GameActivity : AppCompatActivity(), GameEndDialogFragment.Listener {
 
     private fun makeSpellingSequence(): List<Phoneme> = word.phonemes.mapNotNull { if (!it.isSilent) it else null }
 
-    private fun makePhonemeOptions(): List<Phoneme> {
-        val options = mutableListOf<Phoneme>()
-        if (level == 8) {
-            options.addAll(spellingSequence)
-        } else {
-            options.add(currentPhoneme)
-        }
-
-        while (options.size < phonemeOptionsCount) {
-            val randomPhoneme = PhonemesDb.randomPhoneme
-            if (randomPhoneme.isSilent) continue
-            if (randomPhoneme.spelling in options.map { it.spelling }) continue
-            options.add(randomPhoneme)
-        }
-
-        return options.shuffled()
-    }
-
-    private fun setPhonemeButtons(phonemes: List<Phoneme>) {
+    private fun setPhonemeButtons() {
         grid.removeAllViews()
-
         val (col, row) = square(phonemeOptionsCount)
         grid.columnCount = col
         grid.rowCount = row
 
-        phonemes.forEach { phoneme ->
+        makePhonemeOptions().forEach { phoneme ->
             val button = PhonemeButton(this, phoneme)
             button.setOnClickListener {
                 if ((it as PhonemeButton).phoneme == currentPhoneme) {
+                    AudioPlayer.positiveSound(this).play()
                     spelledCount++
                     setSpellingText()
+                    if (level == 8) it.isEnabled = false
+                    else if (spelledCount < spellingSequence.size) setPhonemeButtons()
 
-                    if (spelledCount == spellingSequence.size) {
-                        handleCorrectSpelling()
-
-                    } else {
-                        AudioPlayer.positiveSound(this).play()
-                        if (level == 8) {
-                            it.setEnabled(false)
-                        } else {
-                            setPhonemeButtons(makePhonemeOptions())
-                        }
-                    }
-                } else {
-                    AudioPlayer.negativeSound(this).play()
-                }
+                    if (spelledCount == spellingSequence.size) handleCorrectSpelling()
+                } else AudioPlayer.negativeSound(this).play()
             }
 
             button.setOnLongClickListener {
@@ -139,26 +111,50 @@ class GameActivity : AppCompatActivity(), GameEndDialogFragment.Listener {
         }
     }
 
-    private fun handleCorrectSpelling(){
-        correctSpelledCount++
-        if (level == 8){
-            if (correctSpelledCount == 3){
-                markWordAsComplete()
-                GameEndDialogFragment.newInstance().show(supportFragmentManager, "win")
-            } else {
-                AudioPlayer.praiseWord(this).play()
-                resetSpelling()
-            }
-        } else {
-            markWordAsComplete()
-            GameEndDialogFragment.newInstance().show(supportFragmentManager, "win")
+    private fun makePhonemeOptions(): List<Phoneme> {
+        val options = mutableListOf<Phoneme>()
+        if (level == 8) options.addAll(spellingSequence) else options.add(currentPhoneme)
+
+        while (options.size < phonemeOptionsCount) {
+            val randomPhoneme = PhonemesDb.randomPhoneme
+            if (randomPhoneme.isSilent) continue
+            if (randomPhoneme.spelling in options.map { it.spelling }) continue
+            if (options.any { it.spelling in randomPhoneme.spelling }) continue // don't let "b" and "r" show up as separate when the phoneme is "br"
+            options.add(randomPhoneme)
         }
 
+        return options.shuffled()
     }
 
-    private fun resetSpelling(){
+    private fun handleCorrectSpelling() {
+        correctSpelledCount++
+        if (level == 8 && correctSpelledCount < 3) {
+            AudioPlayer.praiseWord(this).play { resetSpelling() }
+        } else onComplete()
+    }
+
+    private fun onComplete() {
+        AudioPlayer.praiseWord(this).play()
+        markWordAsComplete()
+        PopupFragment.newInstance { onFinishClicked() }.show(supportFragmentManager, "win")
+    }
+
+    private fun markWordAsComplete() {
+        val prefs = applicationContext.getSharedPreferences("completedWords", Context.MODE_PRIVATE)
+        val editor = prefs.edit()
+
+        editor.putBoolean(word.spelling, true)
+        editor.apply()
+    }
+
+    private fun onFinishClicked() {
+        setResult(Activity.RESULT_OK, GameFinishIntent(word))
+        finish()
+    }
+
+    private fun resetSpelling() {
         spelledCount = 0
-        setPhonemeButtons(makePhonemeOptions())
+        setPhonemeButtons()
         setSpellingText()
     }
 
@@ -168,20 +164,5 @@ class GameActivity : AppCompatActivity(), GameEndDialogFragment.Listener {
         val v = ceil(sqrt(k.toDouble())).toInt()
         val h = truncate(k.toDouble() / v).toInt()
         return Square(h, v)
-    }
-
-    private fun markWordAsComplete() {
-        AudioPlayer.praiseWord(this).play()
-
-        val prefs = applicationContext.getSharedPreferences("completedWords", Context.MODE_PRIVATE)
-        val editor = prefs.edit()
-
-        editor.putBoolean(word.spelling, true)
-        editor.apply()
-    }
-
-    override fun onFinishClicked() {
-        setResult(Activity.RESULT_OK, GameFinishIntent(word))
-        finish()
     }
 }

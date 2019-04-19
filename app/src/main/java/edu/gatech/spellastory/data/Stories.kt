@@ -24,16 +24,20 @@ class Stories private constructor(context: Context) {
         phonemes
     }
 
-    private fun read(context: Context, vararg stories: String) = stories.map { filename ->
+    fun getStory(title: String): Story? {
+        return stories.find { it.title == title }
+    }
+
+    private fun read(context: Context, vararg stories: kotlin.String) = stories.map { filename ->
         val reader = BufferedReader(InputStreamReader(context.assets.open("stories/$filename.txt")))
         val text = reader.lineSequence().joinToString(" \n")
         Story(filename, parseText(text, Categories.getInstance(context)))
     }
 
-    private fun parseText(storyText: String, categoriesDb: Categories): List<StoryToken> {
+    private fun parseText(storyText: kotlin.String, categoriesDb: Categories): List<StoryToken> {
         val storyTokens = mutableListOf<StoryToken>()
         val tokens = storyText.split(" ")
-        val blankCategories = mutableMapOf<String, List<Category>>()
+        val blankCategories = mutableMapOf<kotlin.String, List<Category>>()
 
         var i = 0
         while (i < tokens.size) {
@@ -43,7 +47,7 @@ class Stories private constructor(context: Context) {
             isAudio(token)?.also { audioFile ->
                 i++
 
-                val text = mutableListOf<String>()
+                val text = mutableListOf<kotlin.String>()
                 while (i < tokens.size && isText(tokens[i]))
                     text.add(tokens[i++])
 
@@ -81,27 +85,27 @@ class Stories private constructor(context: Context) {
         return storyTokens
     }
 
-    private fun isAudio(token: String): String? {
+    private fun isAudio(token: kotlin.String): kotlin.String? {
         val tempToken = cleanToken(token)
         if (tempToken.startsWith("{") && tempToken.endsWith("}")) return tempToken.drop(1).dropLast(1)
         return null
     }
 
-    private fun isBlank(token: String): String? {
+    private fun isBlank(token: kotlin.String): kotlin.String? {
         val tempToken = cleanToken(token)
         if (tempToken.startsWith("[") && tempToken.endsWith("]")) return tempToken.drop(1).dropLast(1)
         return null
     }
 
-    private fun cleanToken(string: String): String {
+    private fun cleanToken(string: kotlin.String): kotlin.String {
         var ret = string.trim()
         if (ret.isNotEmpty() && ret.last() in PUNCTUATION) ret = ret.dropLast(1)
         return ret
     }
 
-    private fun isNewline(string: String): Boolean = string == "\n"
+    private fun isNewline(string: kotlin.String): Boolean = string == "\n"
 
-    private fun isText(string: String): Boolean =
+    private fun isText(string: kotlin.String): Boolean =
             isAudio(string) == null && isBlank(string) == null
 
     companion object : SingletonHolder<Stories, Context>(::Stories) {

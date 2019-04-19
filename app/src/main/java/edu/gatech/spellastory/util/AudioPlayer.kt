@@ -7,8 +7,9 @@ import edu.gatech.spellastory.domain.Phoneme
 import edu.gatech.spellastory.domain.Word
 import edu.gatech.spellastory.domain.stories.Story
 import java.io.FileNotFoundException
+import java.lang.IllegalStateException
 
-class AudioPlayer private constructor(path: String, context: Context) {
+class AudioPlayer private constructor(path: kotlin.String, context: Context) {
 
     private val mp = MediaPlayer()
     var ready: Boolean = false
@@ -33,8 +34,12 @@ class AudioPlayer private constructor(path: String, context: Context) {
     }
 
     fun stop() {
-        mp.stop()
-        mp.release()
+        try {
+            mp.stop()
+            mp.release()
+        } catch (e: IllegalStateException) {
+            e.printStackTrace()
+        }
     }
 
     fun play(onFinish: () -> Unit) {
@@ -53,7 +58,7 @@ class AudioPlayer private constructor(path: String, context: Context) {
     companion object {
         fun fromWord(word: Word, context: Context) = AudioPlayer("audio/${if (word.category?.name == "friends") "names" else "words"}/${word.spelling}.mp3", context)
         fun fromPhoneme(phoneme: Phoneme, context: Context) = AudioPlayer("audio/phonemes/${phoneme.spelling}(${phoneme.code}).mp3", context)
-        fun fromStory(story: Story, audioFile: String, context: Context) = AudioPlayer("audio/stories/" + story.filename + "/" + audioFile + ".mp3", context)
+        fun fromStory(story: Story, audioFile: kotlin.String, context: Context) = AudioPlayer("audio/stories/" + story.filename + "/" + audioFile + ".mp3", context)
         fun positiveSound(context: Context) = AudioPlayer("audio/Ding Sound Effect.mp3", context)
         fun negativeSound(context: Context) = AudioPlayer("audio/Try Again.mp3", context)
         fun praiseWord(context: Context): AudioPlayer {
