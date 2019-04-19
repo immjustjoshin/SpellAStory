@@ -37,6 +37,7 @@ class GameActivity : AppCompatActivity(), GameEndDialogFragment.Listener {
     private var spelledCount = 0
     private val currentPhoneme: Phoneme
         get() = spellingSequence[spelledCount]
+    private var correctSpelledCount = 0
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -114,8 +115,8 @@ class GameActivity : AppCompatActivity(), GameEndDialogFragment.Listener {
                     setSpellingText()
 
                     if (spelledCount == spellingSequence.size) {
-                        markWordAsComplete()
-                        GameEndDialogFragment.newInstance().show(supportFragmentManager, "win")
+                        handleCorrectSpelling()
+
                     } else {
                         AudioPlayer.positiveSound(this).play()
                         if (level == 8) {
@@ -136,6 +137,29 @@ class GameActivity : AppCompatActivity(), GameEndDialogFragment.Listener {
 
             grid.addView(button)
         }
+    }
+
+    private fun handleCorrectSpelling(){
+        correctSpelledCount++
+        if (level == 8){
+            if (correctSpelledCount == 3){
+                markWordAsComplete()
+                GameEndDialogFragment.newInstance().show(supportFragmentManager, "win")
+            } else {
+                AudioPlayer.praiseWord(this).play()
+                resetSpelling()
+            }
+        } else {
+            markWordAsComplete()
+            GameEndDialogFragment.newInstance().show(supportFragmentManager, "win")
+        }
+
+    }
+
+    private fun resetSpelling(){
+        spelledCount = 0
+        setPhonemeButtons(makePhonemeOptions())
+        setSpellingText()
     }
 
     data class Square(val h: Int, val v: Int)
